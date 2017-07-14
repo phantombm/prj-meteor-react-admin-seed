@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+import './Navigation.less';
+
 export default class Navigation extends Component {
   static propTyes = {
     items: PropTypes.array
@@ -57,12 +59,30 @@ export default class Navigation extends Component {
 
   componentDidMount() {
     $('#side-menu').metisMenu();
-    console.log(this.props.match.url);
   }
 
+  renderItems = () => {
+    return this.props.items.map((item) => {
+      return (
+        <li key={ item.url }>
+          <a href={ item.url }><i className={ 'fa ' + item.icon }></i><span className="nav-label" data-i18n="nav.dashboard">{ item.title }</span>{ item.subItems.length != 0 && <span className="fa arrow"></span> }</a>
+          { item.subItems.length != 0 && (<ul className="nav nav-second-level collapse { this.props.match.url == item.url && 'in' }">
+            { this.renderSubItems(item) }
+          </ul>) }
+        </li>
+      );
+    });
+  };
+
+  renderSubItems = (item) => {
+    return item.subItems.map((subItem) => {
+      return (
+        <li key={ subItem.url }><a href={ subItem.url }>{ subItem.title }</a></li>
+      );
+    });
+  };
+
   render() {
-
-
     return (
       <nav className="navbar-default navbar-static-side" role="navigation">
         <div className="sidebar-collapse">
@@ -89,13 +109,7 @@ export default class Navigation extends Component {
               </div>
               <div className="logo-element">IN+</div>
             </li>
-            { this.props.items.map((item) =>
-              (<li key={ item.url }>
-                <a href={ item.url }><i className={ 'fa ' + item.icon }></i><span className="nav-label" data-i18n="nav.dashboard">{ item.title }</span>{ item.subItems.length != 0 && <span className="fa arrow"></span> }</a>
-                { item.subItems.length != 0 && (<ul className="nav nav-second-level collapse { this.props.match.url == item.url && 'in' }">
-                  { item.subItems.map((subItem) => (<li key={ subItem.url }><a href={ subItem.url }>{ subItem.title }</a></li>)) }
-                </ul>) }
-              </li>)) }
+            { this.renderItems() }
           </ul>
         </div>
       </nav>
