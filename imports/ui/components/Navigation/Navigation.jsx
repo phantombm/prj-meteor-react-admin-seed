@@ -118,8 +118,6 @@ export default class Navigation extends Component {
 
   componentDidMount() {
     $('#side-menu').metisMenu();
-
-    console.log(this.props.match.url);
   }
 
   renderItems = () => {
