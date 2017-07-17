@@ -24,3 +24,4 @@ react-meteor-data
 fortawesome:fontawesome
 jquery
 twbs:bootstrap@3.3.6
+accounts-password

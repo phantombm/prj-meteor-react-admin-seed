@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Links } from '../../api/links/links';
+import { Accounts } from 'meteor/accounts-base';
 
 Meteor.startup(() => {
   if (Links.find().count() == 0) {

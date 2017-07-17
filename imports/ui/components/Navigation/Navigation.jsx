@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
-import './Navigation.less';
+import { Link } from 'react-router-dom';
 
 export default class Navigation extends Component {
   static propTyes = {
@@ -12,45 +11,105 @@ export default class Navigation extends Component {
     items: [
       {
         title: '대쉬보드',
-        url: '/asdf',
-        icon: 'fa-th-large',
+        url: '/dashboard',
+        icon: 'fa-bar-chart-o',
         subItems: []
       },
       {
-        title: '테스트2',
-        url: '/test2',
-        icon: 'fa-th-large',
+        title: '모니터링',
+        url: '',
+        icon: 'fa-desktop',
         subItems: [
           {
-            title: '테스트 하위',
-            url: '/sub_test'
+            title: '채팅상담',
+            url: '/chatRooms'
           },
           {
-            title: '테스트 하위2',
-            url: '/sub_test2'
+            title: '채팅관리',
+            url: '/chatManagement'
           },
           {
-            title: '테스트 하위3',
-            url: '/sub_test3'
+            title: '리뷰관리',
+            url: '/reviewManagement'
           }
         ]
       },
       {
-        title: '테스트3',
-        url: '/test3',
-        icon: 'fa-th-large',
+        title: '메뉴관리',
+        url: '',
+        icon: 'fa-file-text',
         subItems: [
           {
-            title: '테스트 하위4',
-            url: '/sub_test4'
+            title: '공지관리',
+            url: '/notices'
           },
           {
-            title: '테스트 하위5',
-            url: '/sub_test5'
+            title: 'FAQ 관리',
+            url: '/faqs'
           },
           {
-            title: '테스트 하위6',
-            url: '/sub_test6'
+            title: '약관관리',
+            url: '/terms'
+          }
+        ]
+      },
+      {
+        title: '회원관리',
+        url: '',
+        icon: 'fa-user',
+        subItems: [
+          {
+            title: '쌤관리',
+            url: '/ssams'
+          },
+          {
+            title: '고객관리',
+            url: '/users'
+          }
+        ]
+      },
+      {
+        title: '컨텐츠관리',
+        url: '',
+        icon: 'fa-cog',
+        subItems: [
+          {
+            title: '상품',
+            url: '/goods'
+          },
+          {
+            title: '포트폴리오',
+            url: '/portfoilos'
+          }
+        ]
+      },
+      {
+        title: '정산관리',
+        url: '',
+        icon: 'fa-credit-card',
+        subItems: [
+          {
+            title: '판매내역',
+            url: '/sales'
+          },
+          {
+            title: '정산내역',
+            url: '/balancedMoney'
+          }
+        ]
+      },
+      {
+        title: '마케팅',
+        url: '',
+        icon: 'fa-bell',
+        subItems: [
+          {
+            title: '이벤트',
+            url: '/events'
+          },
+          {
+            title: '푸쉬알람',
+            url: '/pushs'
           }
         ]
       }
@@ -59,14 +118,28 @@ export default class Navigation extends Component {
 
   componentDidMount() {
     $('#side-menu').metisMenu();
+
+    console.log(this.props.match.url);
   }
 
   renderItems = () => {
-    return this.props.items.map((item) => {
+    return this.props.items.map((item, index) => {
+      let isItemActive = false;
+
+      if (item.url == this.props.match.url) {
+        isItemActive = true;
+      }
+
+      _.each(item.subItems, (subItem) => {
+        if (subItem.url == this.props.match.url) {
+          isItemActive = true;
+        }
+      });
+
       return (
-        <li key={ item.url }>
-          <a href={ item.url }><i className={ 'fa ' + item.icon }></i><span className="nav-label" data-i18n="nav.dashboard">{ item.title }</span>{ item.subItems.length != 0 && <span className="fa arrow"></span> }</a>
-          { item.subItems.length != 0 && (<ul className="nav nav-second-level collapse { this.props.match.url == item.url && 'in' }">
+        <li key={ index } className={ isItemActive && 'active' }>
+          <Link to={ item.url }><i className={ 'fa ' + item.icon }></i><span className="nav-label" data-i18n="nav.dashboard">{ item.title }</span>{ item.subItems.length != 0 && <span className="fa arrow"></span> }</Link>
+          { item.subItems.length != 0 && (<ul className={ 'nav nav-second-level collapse ' + (isItemActive && 'in') }>
             { this.renderSubItems(item) }
           </ul>) }
         </li>
@@ -75,9 +148,15 @@ export default class Navigation extends Component {
   };
 
   renderSubItems = (item) => {
-    return item.subItems.map((subItem) => {
+    return item.subItems.map((subItem, index) => {
+      let isSubItemActive = false;
+
+      if (subItem.url == this.props.match.url) {
+        isSubItemActive = true;
+      }
+
       return (
-        <li key={ subItem.url }><a href={ subItem.url }>{ subItem.title }</a></li>
+        <li key={ index } className={ isSubItemActive && 'active' }><Link to={ subItem.url }>{ subItem.title }</Link></li>
       );
     });
   };
@@ -86,9 +165,6 @@ export default class Navigation extends Component {
     return (
       <nav className="navbar-default navbar-static-side" role="navigation">
         <div className="sidebar-collapse">
-          <a className="close-canvas-menu">
-            <i className="fa fa-times"></i>
-          </a>
           <ul className="nav metismenu" id="side-menu">
             <li className="nav-header">
               <div className="dropdown profile-element">

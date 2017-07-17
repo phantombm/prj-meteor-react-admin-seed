@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import { Route } from 'react-router';
 
-import Navigation from '../components/Navigation/Navigation.jsx';
-import DataTable from "../../ui/pages/DataTable/DataTable";
+import Navigation from '../components/Navigation/Navigation';
+import Users from "../pages/Users/Users";
 import TopNavigation from '../components/TopNavigation/TopNavigation';
+import PageHeader from "../components/PageHeader/PageHeader";
+import Footer from "../components/Footer/Footer";
+import Profile from "../../ui/pages/Profile/Profile";
 
 export default class Layout extends Component {
   componentDidMount() {
@@ -46,7 +49,10 @@ export default class Layout extends Component {
         <Navigation match={ this.props.match } />
         <div id="page-wrapper" className="gray-bg">
           <TopNavigation />
-          <Route path={ `${this.props.match.url}` } component={ DataTable } />
+          <PageHeader />
+          <Route path="/users" component={ Users } />
+          <Route path="/profile" component={ Profile } />
+          <Footer />
         </div>
       </div>
     );
