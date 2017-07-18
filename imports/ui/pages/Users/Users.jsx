@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { createContainer } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 class Users extends Component {
   static propTypes = {
@@ -11,16 +12,28 @@ class Users extends Component {
   static defaultProps = {
     fields: [
       {
-        title: 'user id',
+        title: 'user _id',
         key: '_id'
+      },
+      {
+        title: '유저이름',
+        key: 'username'
       },
       {
         title: 'email',
         key: 'emails.0.address'
       },
       {
-        title: 'CP',
+        title: '핸드폰번호',
         key: 'profile.cellPhoneNumber'
+      },
+      {
+        title: '구매갯수',
+        key: 'profile.purchaseNumber'
+      },
+      {
+        title: '구매금액',
+        key: 'profile.purchaseAmount'
       }
     ]
   };
@@ -45,7 +58,8 @@ class Users extends Component {
                 .css('font-size', 'inherit');
             }
           }
-        ]
+        ],
+        destroy: true
       });
     }
   }
@@ -78,9 +92,16 @@ class Users extends Component {
         const keys = field.key.split('.');
 
         if (keys.length == 1) {
-          return (
-            <td>{ user[keys[0]] }</td>
-          );
+          if (keys[0] == '_id') {
+            return (
+              <td><Link to={ '/users/' + user[keys[0]] }>{ user[keys[0]] }</Link></td>
+            );
+          }
+          else {
+            return (
+              <td>{ user[keys[0]] }</td>
+            );
+          }
         }
         else if (keys.length == 2) {
           return (
@@ -111,29 +132,7 @@ class Users extends Component {
                     <thead>
                       <tr>{ this.renderTableHead() }</tr>
                     </thead>
-                    <tbody>
-                      { this.renderTableBody() }
-                      <tr className="gradeA">
-                        <td>Trident</td>
-                        <td className="center">5.5</td>
-                        <td className="center">A</td>
-                      </tr>
-                      <tr className="gradeA">
-                        <td>Trident</td>
-                        <td className="center">5.5</td>
-                        <td className="center">A</td>
-                      </tr>
-                      <tr className="gradeA">
-                        <td>Trident</td>
-                        <td className="center">5.5</td>
-                        <td className="center">A</td>
-                      </tr>
-                      <tr className="gradeA">
-                        <td>Trident</td>
-                        <td className="center">5.5</td>
-                        <td className="center">A</td>
-                      </tr>
-                    </tbody>
+                    <tbody>{ this.renderTableBody() }</tbody>
                     <tfoot>
                       <tr>{ this.renderTableHead() }</tr>
                     </tfoot>

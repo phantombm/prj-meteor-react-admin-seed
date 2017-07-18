@@ -17,7 +17,7 @@ export default class Navigation extends Component {
       },
       {
         title: '모니터링',
-        url: '',
+        url: '#',
         icon: 'fa-desktop',
         subItems: [
           {
@@ -36,7 +36,7 @@ export default class Navigation extends Component {
       },
       {
         title: '메뉴관리',
-        url: '',
+        url: '#',
         icon: 'fa-file-text',
         subItems: [
           {
@@ -55,7 +55,7 @@ export default class Navigation extends Component {
       },
       {
         title: '회원관리',
-        url: '',
+        url: '#',
         icon: 'fa-user',
         subItems: [
           {
@@ -70,7 +70,7 @@ export default class Navigation extends Component {
       },
       {
         title: '컨텐츠관리',
-        url: '',
+        url: '#',
         icon: 'fa-cog',
         subItems: [
           {
@@ -85,7 +85,7 @@ export default class Navigation extends Component {
       },
       {
         title: '정산관리',
-        url: '',
+        url: '#',
         icon: 'fa-credit-card',
         subItems: [
           {
@@ -100,7 +100,7 @@ export default class Navigation extends Component {
       },
       {
         title: '마케팅',
-        url: '',
+        url: '#',
         icon: 'fa-bell',
         subItems: [
           {
@@ -124,12 +124,16 @@ export default class Navigation extends Component {
     return this.props.items.map((item, index) => {
       let isItemActive = false;
 
-      if (item.url == this.props.match.url) {
+      let regExp = new RegExp(item.url);
+
+      if (regExp.test(this.props.match.url)) {
         isItemActive = true;
       }
 
       _.each(item.subItems, (subItem) => {
-        if (subItem.url == this.props.match.url) {
+        let regExp = new RegExp(subItem.url);
+
+        if (regExp.test(this.props.match.url)) {
           isItemActive = true;
         }
       });
@@ -149,7 +153,9 @@ export default class Navigation extends Component {
     return item.subItems.map((subItem, index) => {
       let isSubItemActive = false;
 
-      if (subItem.url == this.props.match.url) {
+      let regExp = new RegExp(subItem.url);
+
+      if (regExp.test(this.props.match.url)) {
         isSubItemActive = true;
       }
 

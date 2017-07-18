@@ -50,8 +50,8 @@ export default class Layout extends Component {
         <div id="page-wrapper" className="gray-bg">
           <TopNavigation />
           <PageHeader />
-          <Route path="/users" component={ Users } />
-          <Route path="/profile" component={ Profile } />
+          <Route exact path="/users" component={ Users } />
+          <Route path="/users/:id" component={ Profile } />
           <Footer />
         </div>
       </div>

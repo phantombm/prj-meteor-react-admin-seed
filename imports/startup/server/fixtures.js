@@ -32,15 +32,17 @@ Meteor.startup(() => {
     });
   }
 
-  // Accounts.createUser({
-  //   username: 'test',
-  //   email: 'test@teset.com',
-  //   password: 'test',
-  //   profile: {
-  //     name: 'test',
-  //     cellPhoneNumber: '01011112222',
-  //     purchaseNumber: 5,
-  //     purchaseAmount: 500000
-  //   }
-  // });
+  // for (let i = 0; i < 100; i++) {
+  //   Accounts.createUser({
+  //     username: 'test_' + i,
+  //     email: 'test_' + i + '@teset.com',
+  //     password: 'test',
+  //     profile: {
+  //       name: 'test',
+  //       cellPhoneNumber: '010111122' + i,
+  //       purchaseNumber: i,
+  //       purchaseAmount: i * 50000
+  //     }
+  //   });
+  // }
 });

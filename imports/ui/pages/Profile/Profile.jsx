@@ -17,7 +17,7 @@ export default class Profile extends Component {
         <div className="row m-b-lg m-t-lg">
           <div className="col-md-6">
             <div className="profile-image">
-              <img src="img/a4.jpg" className="img-circle circle-border m-b-md" alt="profile" />
+              <img src="/img/a4.jpg" className="img-circle circle-border m-b-md" alt="profile" />
             </div>
             <div className="profile-info">
               <div className="">
