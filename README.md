@@ -1,7 +1,7 @@
 ### Bootstrapping
 ```
 / $ metoer npm install
-/ $ metoer
+/ $ METEOR_OFFLINE_CATALOG=1 metoer
 ```
 
 ### Component Style Guide
