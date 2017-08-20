@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 export default class Footer extends Component {
-  static propTyes = {
+  static propTypes = {
     company: PropTypes.string,
     period: PropTypes.string
   };
@@ -16,7 +16,7 @@ export default class Footer extends Component {
     return (
       <div className="footer">
         <div>
-          <strong>Copyright</strong> { this.props.company } &copy; { this.props.period }
+          <strong>Copyright</strong> {this.props.company} &copy; {this.props.period}
         </div>
       </div>
     );

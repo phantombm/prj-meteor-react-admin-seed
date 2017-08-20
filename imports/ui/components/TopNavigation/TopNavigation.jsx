@@ -30,11 +30,11 @@ export default class TopNavigation extends Component {
       <div className="row border-bottom">
         <nav className="navbar navbar-static-top" role="navigation" style={{ marginBottom: '0' }}>
           <div className="navbar-header">
-            <a onClick={ this.onClickMinimalization } id="navbar-minimalize" className="minimalize-styl-2 btn btn-primary" href="#"><i className="fa fa-bars"></i></a>
+            <a onClick={ this.onClickMinimalization } id="navbar-minimalize" className="minimalize-styl-2 btn btn-primary" href="#"><i className="fa fa-bars" /></a>
           </div>
           <ul className="nav navbar-top-links navbar-right">
             <li>
-              <a href="#"><i className="fa fa-sign-out"></i> Log out</a>
+              <a href="#"><i className="fa fa-sign-out" /> Log out</a>
             </li>
           </ul>
         </nav>

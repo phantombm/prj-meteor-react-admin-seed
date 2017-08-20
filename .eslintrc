@@ -1,0 +1,21 @@
+{
+  "parser": "babel-eslint",
+  "extends": [
+    "airbnb",
+    "eslint:recommended"
+  ],
+  "rules": {
+    "jsx-a11y/href-no-hash": "off",
+    "react/prefer-stateless-function": "off",
+    "react/forbid-prop-types": "off",
+    "react/no-array-index-key": "off",
+    "react/sort-comp": "off",
+    "import/extensions": "off",
+    "import/no-unresolved": "off",
+    "import/no-extraneous-dependencies": "off",
+    "import/prefer-default-export": "off",
+    "no-undef": "off",
+    "jsx-a11y/no-redundant-roles": "off",
+    "jsx-a11y/img-redundant-alt": "off"
+  }
+}

@@ -7,9 +7,9 @@ import Layout from '../../ui/layouts/Layout';
 const browserHistory = createBrowserHistory();
 
 export const renderRoutes = () => (
-  <Router history={ browserHistory }>
+  <Router history={browserHistory}>
     <div>
-      <Route path="*" component={ Layout } />
+      <Route path="*" component={Layout} />
     </div>
   </Router>
 );

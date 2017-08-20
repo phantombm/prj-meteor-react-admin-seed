@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Route } from 'react-router';
+import PropTypes from 'prop-types';
 
 import Navigation from '../components/Navigation/Navigation';
 import Users from "../pages/Users/Users";
@@ -9,6 +10,10 @@ import Footer from "../components/Footer/Footer";
 import Profile from "../../ui/pages/Profile/Profile";
 
 export default class Layout extends Component {
+  static propTypes = {
+    match: PropTypes.object.isRequired
+  };
+
   componentDidMount() {
     $(window).bind("resize load", () => {
       if ($(window).width() < 769) {
@@ -46,12 +51,12 @@ export default class Layout extends Component {
   render() {
     return (
       <div id="wrapper">
-        <Navigation match={ this.props.match } />
+        <Navigation match={this.props.match} />
         <div id="page-wrapper" className="gray-bg">
           <TopNavigation />
           <PageHeader />
-          <Route exact path="/users" component={ Users } />
-          <Route path="/users/:id" component={ Profile } />
+          <Route exact path="/users" component={Users} />
+          <Route exact path="/users/:id" component={Profile} />
           <Footer />
         </div>
       </div>

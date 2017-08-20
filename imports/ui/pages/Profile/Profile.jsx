@@ -37,37 +37,37 @@ export default class Profile extends Component {
           <div className="col-md-3">
             <table className="table small m-b-xs">
               <tbody>
-              <tr>
-                <td>
-                  <strong>142</strong> Projects
-                </td>
-                <td>
-                  <strong>22</strong> Followers
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <strong>61</strong> Comments
-                </td>
-                <td>
-                  <strong>54</strong> Articles
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <strong>154</strong> Tags
-                </td>
-                <td>
-                  <strong>32</strong> Friends
-                </td>
-              </tr>
+                <tr>
+                  <td>
+                    <strong>142</strong> Projects
+                  </td>
+                  <td>
+                    <strong>22</strong> Followers
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>61</strong> Comments
+                  </td>
+                  <td>
+                    <strong>54</strong> Articles
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>154</strong> Tags
+                  </td>
+                  <td>
+                    <strong>32</strong> Friends
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
           <div className="col-md-3">
             <small>Sales in last 24h</small>
             <h2 className="no-margins">206 480</h2>
-            <div id="sparkline1"></div>
+            <div id="sparkline1" />
           </div>
         </div>
         <div className="row">
@@ -77,14 +77,13 @@ export default class Profile extends Component {
                 <h3>About Alex Smith</h3>
                 <p className="small">
                   There are many variations of passages of Lorem Ipsum available, but the majority have
-                  suffered alteration in some form, by injected humour, or randomised words which don't.
-                  <br/>
-                  <br/>
-                  If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't
+                  suffered alteration in some form, by injected humour, or randomised words which don{'\''}t.<br />
+                  <br />
+                  If you are going to use a passage of Lorem Ipsum, you need to be sure there isn{'\''}t
                   anything embarrassing
                 </p>
                 <p className="small font-bold">
-                  <span><i className="fa fa-circle text-navy"></i> Online status</span>
+                  <span><i className="fa fa-circle text-navy" /> Online status</span>
                 </p>
               </div>
             </div>

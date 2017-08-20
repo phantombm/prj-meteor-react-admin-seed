@@ -1,2 +1,2 @@
-import '/imports/startup/both/index';
-import '/imports/startup/client/index';
+import '../imports/startup/both/index';
+import '../imports/startup/client/index';

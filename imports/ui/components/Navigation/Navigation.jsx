@@ -178,12 +178,12 @@ export default class Navigation extends Component {
                 <a data-toggle="dropdown" className="dropdown-toggle" href="#">
                   <span className="clear">
                     <span className="block m-t-xs"><strong className="font-bold">David Williams</strong></span>
-                    <span className="text-muted text-xs block">Art Director <b className="caret"></b></span>
+                    <span className="text-muted text-xs block">Art Director <b className="caret" /></span>
                   </span>
                 </a>
                 <ul className="dropdown-menu animated fadeInRight m-t-xs">
                   <li><a href="/profile">Profile</a></li>
-                  <li className="divider"></li>
+                  <li className="divider" />
                   <li><a href="/logout">Logout</a></li>
                 </ul>
               </div>
