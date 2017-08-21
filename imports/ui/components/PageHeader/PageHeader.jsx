@@ -1,17 +1,33 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 export default class PageHeader extends Component {
   static propTypes = {
-    title: PropTypes.string,
-    category: PropTypes.string,
-    hasCategory: PropTypes.bool
+    title: PropTypes.string.isRequired,
+    items: PropTypes.array.isRequired
   };
 
-  static defaultProps = {
-    title: 'title',
-    category: 'category',
-    hasCategory: false
+  renderItems = () => {
+    return this.props.items.map((item, index) => {
+      if (index != this.props.items.length - 1) {
+        if (!item.linkTo) {
+          return (
+            <li key={index}>{ item.name }</li>
+          );
+        }
+        else {
+          return (
+            <li key={index}><Link to={item.linkTo}>{ item.name }</Link></li>
+          );
+        }
+      }
+      else {
+        return (
+          <li key={index} className="active"><strong>{ item.name }</strong></li>
+        );
+      }
+    });
   };
 
   render() {
@@ -20,11 +36,7 @@ export default class PageHeader extends Component {
         <div className="col-lg-12">
           <h2>{this.props.title}</h2>
           <ol className="breadcrumb">
-            <li><a href="/">Home</a></li>
-            { this.props.hasCategory &&
-              <li><a>{ this.props.category }</a></li>
-            }
-            <li className="active"><strong>{ this.props.title }</strong></li>
+            { this.renderItems() }
           </ol>
         </div>
       </div>

@@ -3,16 +3,123 @@ import { Route } from 'react-router';
 import PropTypes from 'prop-types';
 
 import Navigation from '../components/Navigation/Navigation';
-import Users from "../pages/Users/Users";
 import TopNavigation from '../components/TopNavigation/TopNavigation';
-import PageHeader from "../components/PageHeader/PageHeader";
 import Footer from "../components/Footer/Footer";
-import Profile from "../../ui/pages/Profile/Profile";
+import Users from "../pages/Users/Users";
+import User from "../pages/User/User";
+import Ssams from "../pages/Ssams/Ssams";
 
 export default class Layout extends Component {
   static propTypes = {
     match: PropTypes.object.isRequired
   };
+
+  navigationItems = [
+    {
+      title: '대쉬보드',
+      url: '/dashboard',
+      icon: 'fa-bar-chart-o',
+      subItems: []
+    },
+    {
+      title: '모니터링',
+      url: '#',
+      icon: 'fa-desktop',
+      subItems: [
+        {
+          title: '채팅상담',
+          url: '/chatRooms'
+        },
+        {
+          title: '채팅관리',
+          url: '/chatManagement'
+        },
+        {
+          title: '리뷰관리',
+          url: '/reviewManagement'
+        }
+      ]
+    },
+    {
+      title: '메뉴관리',
+      url: '#',
+      icon: 'fa-file-text',
+      subItems: [
+        {
+          title: '공지관리',
+          url: '/notices'
+        },
+        {
+          title: 'FAQ 관리',
+          url: '/faqs'
+        },
+        {
+          title: '약관관리',
+          url: '/terms'
+        }
+      ]
+    },
+    {
+      title: '회원관리',
+      url: '#',
+      icon: 'fa-user',
+      subItems: [
+        {
+          title: '쌤관리',
+          url: '/ssams'
+        },
+        {
+          title: '고객관리',
+          url: '/users'
+        }
+      ]
+    },
+    {
+      title: '컨텐츠관리',
+      url: '#',
+      icon: 'fa-cog',
+      subItems: [
+        {
+          title: '상품',
+          url: '/goods'
+        },
+        {
+          title: '포트폴리오',
+          url: '/portfoilos'
+        }
+      ]
+    },
+    {
+      title: '정산관리',
+      url: '#',
+      icon: 'fa-credit-card',
+      subItems: [
+        {
+          title: '판매내역',
+          url: '/sales'
+        },
+        {
+          title: '정산내역',
+          url: '/balancedMoney'
+        }
+      ]
+    },
+    {
+      title: '마케팅',
+      url: '#',
+      icon: 'fa-bell',
+      subItems: [
+        {
+          title: '이벤트',
+          url: '/events'
+        },
+        {
+          title: '푸쉬알람',
+          url: '/pushs'
+        }
+      ]
+    }
+  ];
 
   componentDidMount() {
     $(window).bind("resize load", () => {
@@ -51,13 +158,13 @@ export default class Layout extends Component {
   render() {
     return (
       <div id="wrapper">
-        <Navigation match={this.props.match} />
+        <Navigation match={this.props.match} items={this.navigationItems} logo="WB+" />
         <div id="page-wrapper" className="gray-bg">
           <TopNavigation />
-          <PageHeader />
           <Route exact path="/users" component={Users} />
-          <Route exact path="/users/:id" component={Profile} />
-          <Footer />
+          <Route exact path="/users/:id" component={User} />
+          <Route exact path="/ssams" component={Ssams} />
+          <Footer company="makeupforl" period="2017" />
         </div>
       </div>
     );

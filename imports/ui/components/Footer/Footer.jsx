@@ -3,13 +3,8 @@ import PropTypes from 'prop-types';
 
 export default class Footer extends Component {
   static propTypes = {
-    company: PropTypes.string,
-    period: PropTypes.string
-  };
-
-  static defaultProps = {
-    company: 'smartlink',
-    period: '2015-2017'
+    company: PropTypes.string.isRequired,
+    period: PropTypes.string.isRequired
   };
 
   render() {

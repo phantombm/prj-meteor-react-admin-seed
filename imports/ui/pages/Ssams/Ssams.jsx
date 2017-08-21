@@ -8,14 +8,14 @@ import moment from 'moment';
 import DataTable from '../../components/DataTable/DataTable';
 import PageHeader from '../../components/PageHeader/PageHeader';
 
-class Users extends Component {
+class Ssams extends Component {
   static propTypes = {
-    isUsersReady: PropTypes.bool.isRequired,
-    users: PropTypes.array.isRequired
+    isSsamsReady: PropTypes.bool.isRequired,
+    ssams: PropTypes.array.isRequired
   };
 
   state = {
-    users: [],
+    ssams: [],
     checkedIds: []
   };
 
@@ -42,12 +42,12 @@ class Users extends Component {
       key: 'profile.phoneNumber'
     },
     {
-      name: 'phurchase count',
-      key: 'profile.phurchaseCount'
+      name: 'service count',
+      key: 'profile.informationForSsam.serviceCount'
     },
     {
-      name: 'phurchase amount',
-      key: 'profile.phurchaseAmount'
+      name: 'service amount',
+      key: 'profile.informationForSsam.serviceAmount'
     },
     {
       name: 'created at',
@@ -60,21 +60,21 @@ class Users extends Component {
       name: '회원관리'
     },
     {
-      name: '고객관리'
+      name: '쌤관리'
     }
   ];
 
   componentWillReceiveProps(nextProps) {
-    nextProps.users.map((user) => {
-      user.createdAt = moment(user.createdAt).format('YYYY-MM-DD');
+    nextProps.ssams.map((ssam) => {
+      ssam.createdAt = moment(ssam.createdAt).format('YYYY-MM-DD');
 
-      user.profile.phurchaseCount = user.profile.reservations.length;
+      ssam.profile.informationForSsam.serviceCount = ssam.profile.informationForSsam.reservations.length;
 
-      const phurchaseAmount = _.reduce(user.profile.reservations, (sum, reservation) => {
+      const serviceAmount = _.reduce(ssam.profile.informationForSsam.reservations, (sum, reservation) => {
         return sum + reservation.price.amount;
       }, 0);
 
-      user.profile.phurchaseAmount = this.getPrice(phurchaseAmount);
+      ssam.profile.informationForSsam.serviceAmount = this.getPrice(serviceAmount);
     });
   }
 
@@ -89,7 +89,7 @@ class Users extends Component {
   };
 
   render() {
-    if (!this.props.isUsersReady) {
+    if (!this.props.isSsamsReady) {
       return (
         <div />
       );
@@ -97,16 +97,16 @@ class Users extends Component {
 
     return (
       <div>
-        <PageHeader title="고객관리" items={this.pageHeaderItems} />
+        <PageHeader title="쌤관리" items={this.pageHeaderItems} />
         <div className="wrapper wrapper-content animated fadeInRight">
           <div className="row">
             <div className="col-lg-12">
               <div className="ibox float-e-margins">
                 <div className="ibox-title">
-                  <h5>고객관리</h5>
+                  <h5>쌤관리</h5>
                 </div>
                 <div className="ibox-content">
-                  <DataTable data={this.props.users} name="users" fields={this.fields} onChangeChecked={this.onChangeChecked} />
+                  <DataTable data={this.props.ssams} name="ssams" fields={this.fields} onChangeChecked={this.onChangeChecked} />
                 </div>
               </div>
             </div>
@@ -118,12 +118,12 @@ class Users extends Component {
 }
 
 export default createContainer(() => {
-  const usersHandle = Meteor.subscribe('users');
+  const ssamsHandle = Meteor.subscribe('ssams');
 
   return {
-    isUsersReady: usersHandle.ready(),
-    users: Meteor.users.find({
-      'profile.isSsam': false
+    isSsamsReady: ssamsHandle.ready(),
+    ssams: Meteor.users.find({
+      'profile.isSsam': true
     }).fetch()
   };
-}, Users);
+}, Ssams);

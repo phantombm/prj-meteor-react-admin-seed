@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import _ from 'lodash';
 
 export default class DataTable extends Component {
   static propTypes = {
@@ -31,6 +32,8 @@ export default class DataTable extends Component {
     if (this.props.data == previousProps.data) {
       return;
     }
+
+    this.isInitialized = false;
 
     this.initialize();
   }
@@ -231,46 +234,29 @@ export default class DataTable extends Component {
   renderBodyTd = (data) => {
     return (
       this.props.fields.map((field, index) => {
-        const keys = field.key.split('.');
-
-        if (keys.length == 1) {
-          if (!field.linkTo) {
-            return (
-              <td key={index}>{ data[keys[0]] }</td>
-            );
-          }
-          else {
-            return (
-              <td key={index}><Link to={`${field.linkTo}/${data._id}`}>{ data[keys[0]] }</Link></td>
-            );
-          }
+        if (!field.linkTo) {
+          return (
+            <td key={index}>{ this.getValueWithDotNotation(data, field.key) }</td>
+          );
         }
-        else if (keys.length == 2) {
-          if (!field.linkTo) {
-            return (
-              <td key={index}>{ data[keys[0]][keys[1]] }</td>
-            );
-          }
-          else {
-            return (
-              <td key={index}><Link to={`${field.linkTo}/${data._id}`}>{ data[keys[0]][keys[1]] }</Link></td>
-            );
-          }
-        }
-        else if (keys.length == 3) {
-          if (!field.linkTo) {
-            return (
-              <td key={index}>{ data[keys[0]][keys[1]][keys[2]] }</td>
-            );
-          }
-          else {
-            return (
-              <td key={index}><Link to={`${field.linkTo}/${data._id}`}>{ data[keys[0]][keys[1]][keys[2]] }</Link></td>
-            );
-          }
+        else {
+          return (
+            <td key={index}><Link to={`${field.linkTo}/${data._id}`}>{ this.getValueWithDotNotation(data, field.key) }</Link></td>
+          );
         }
       })
     );
+  };
+
+  getValueWithDotNotation = (obejct, dotNotation) => {
+    const keys = dotNotation.split('.');
+
+    if (keys.length == 1) {
+      return obejct[keys[0]];
+    }
+    else {
+      return this.getValueWithDotNotation(obejct[keys[0]], dotNotation.replace(/[a-zA-Z0-9]+?\./, ''));
+    }
   };
 
   render() {
