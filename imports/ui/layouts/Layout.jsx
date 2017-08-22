@@ -12,6 +12,7 @@ import User from "../pages/User/User";
 import Ssams from "../pages/Ssams/Ssams";
 import Ssam from "../pages/Ssam/Ssam";
 import TermsOfService from "../pages/TermsOfService/TermsOfService";
+import PrivacyPolicy from "../pages/PrivacyPolicy/PrivacyPolicy";
 
 export default class Layout extends Component {
   static propTypes = {
@@ -45,21 +46,25 @@ export default class Layout extends Component {
       ]
     },
     {
-      title: '메뉴관리',
+      title: '앱관리',
       url: '#',
       icon: 'fa-file-text',
       subItems: [
         {
-          title: '공지관리',
+          title: '공지사항',
           url: '/notices'
         },
         {
-          title: 'FAQ 관리',
+          title: 'FAQ',
           url: '/faqs'
         },
         {
-          title: '약관관리',
+          title: '서비스 이용약관',
           url: '/termsOfService'
+        },
+        {
+          title: '개인정보 취급방칭',
+          url: '/privacyPolicy'
         }
       ]
     },
@@ -170,6 +175,7 @@ export default class Layout extends Component {
           <Route exact path="/ssams" component={Ssams} />
           <Route exact path="/ssams/:id" component={Ssam} />
           <Route exact path="/termsOfService" component={TermsOfService} />
+          <Route exact path="/privacyPolicy" component={PrivacyPolicy} />
           <Footer company="makeupforl" period="2017" />
         </div>
       </div>

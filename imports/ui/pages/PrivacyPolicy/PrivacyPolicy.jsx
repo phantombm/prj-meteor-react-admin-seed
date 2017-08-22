@@ -3,14 +3,14 @@ import { createContainer } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 
-import { TermsOfService } from '../../../api/termsOfService/termsOfService';
+import { PrivacyPolicy } from '../../../api/privacyPolicy/privacyPolicy';
 
 import PageHeader from '../../components/PageHeader/PageHeader';
 
-class _TermsOfService extends Component {
+class _PrivacyPolicy extends Component {
   static propTypes = {
-    isTermsOfServiceReady: PropTypes.bool.isRequired,
-    termsOfService: PropTypes.object.isRequired
+    isPrivacyPolicyReady: PropTypes.bool.isRequired,
+    privacyPolicy: PropTypes.object.isRequired
   };
 
   pageHeaderItems = [
@@ -18,7 +18,7 @@ class _TermsOfService extends Component {
       name: '앱관리'
     },
     {
-      name: '서비스 이용약관'
+      name: '개인정보 취급방침'
     }
   ];
 
@@ -33,11 +33,11 @@ class _TermsOfService extends Component {
       ]
     });
 
-    $('.summernote').summernote('code', this.props.termsOfService.content);
+    $('.summernote').summernote('code', this.props.privacyPolicy.content);
   }
 
   onClickSave = () => {
-    Meteor.call('termsOfService.update', {
+    Meteor.call('privacyPolicy.update', {
       content: $('.summernote').summernote('code')
     }, (error) => {
       if (error) {
@@ -51,7 +51,7 @@ class _TermsOfService extends Component {
   };
 
   render() {
-    if (!this.props.isTermsOfServiceReady) {
+    if (!this.props.isPrivacyPolicyReady) {
       return (
         <div />
       );
@@ -59,13 +59,13 @@ class _TermsOfService extends Component {
 
     return (
       <div>
-        <PageHeader title="서비스 이용약관" items={this.pageHeaderItems} />
+        <PageHeader title="개인정보 취급방침" items={this.pageHeaderItems} />
         <div className="wrapper wrapper-content">
           <div className="row">
             <div className="col-lg-12">
               <div className="ibox float-e-margins">
                 <div className="ibox-title">
-                  <h5>서비스 이용약관</h5>
+                  <h5>개인정보 취급방침</h5>
                 </div>
                 <div className="ibox-content no-padding">
                   <div className="summernote" />
@@ -90,10 +90,10 @@ class _TermsOfService extends Component {
 }
 
 export default createContainer(() => {
-  const termsOfServiceHandle = Meteor.subscribe('termsOfService');
+  const privacyPolicyHandle = Meteor.subscribe('privacyPolicy');
 
   return {
-    isTermsOfServiceReady: termsOfServiceHandle.ready(),
-    termsOfService: TermsOfService.findOne({}) || {}
+    isPrivacyPolicyReady: privacyPolicyHandle.ready(),
+    privacyPolicy: PrivacyPolicy.findOne({}) || {}
   };
-}, _TermsOfService);
+}, _PrivacyPolicy);
