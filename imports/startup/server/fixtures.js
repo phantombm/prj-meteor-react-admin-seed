@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import { Accounts } from 'meteor/accounts-base'
 
 Meteor.startup(() => {
   // for (let i = 0; i < 100; i++) {

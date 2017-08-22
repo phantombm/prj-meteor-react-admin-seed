@@ -1,10 +1,12 @@
 import { Meteor } from 'meteor/meteor';
+import { TermsOfService } from '../termsOfService';
+
 import { Roles } from 'meteor/alanning:roles';
 
-Meteor.publish('users', function() {
+Meteor.publish('termsOfService', function() {
   // if (!Roles.userIsInRole(this.userId, ['owner'], Roles.GLOBAL_GROUP)) {
   //   return this.ready();
   // }
 
-  return Meteor.users.find({});
+  return TermsOfService.find({});
 });

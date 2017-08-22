@@ -64,20 +64,6 @@ class Users extends Component {
     }
   ];
 
-  componentWillReceiveProps(nextProps) {
-    nextProps.users.map((user) => {
-      user.createdAt = moment(user.createdAt).format('YYYY-MM-DD');
-
-      user.profile.phurchaseCount = user.profile.reservations.length;
-
-      const phurchaseAmount = _.reduce(user.profile.reservations, (sum, reservation) => {
-        return sum + reservation.price.amount;
-      }, 0);
-
-      user.profile.phurchaseAmount = this.getPrice(phurchaseAmount);
-    });
-  }
-
   getPrice = (amount) => {
     return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원';
   };
@@ -94,6 +80,18 @@ class Users extends Component {
         <div />
       );
     }
+
+    this.props.users.map((user) => {
+      user.createdAt = moment(user.createdAt).format('YYYY-MM-DD');
+
+      user.profile.phurchaseCount = user.profile.reservations.length;
+
+      const phurchaseAmount = _.reduce(user.profile.reservations, (sum, reservation) => {
+        return sum + reservation.price.amount;
+      }, 0);
+
+      user.profile.phurchaseAmount = this.getPrice(phurchaseAmount);
+    });
 
     return (
       <div>

@@ -10,7 +10,7 @@ import PageHeader from '../../components/PageHeader/PageHeader';
 
 class Ssams extends Component {
   static propTypes = {
-    isSsamsReady: PropTypes.bool.isRequired,
+    isUsersReady: PropTypes.bool.isRequired,
     ssams: PropTypes.array.isRequired
   };
 
@@ -23,7 +23,7 @@ class Ssams extends Component {
     {
       name: 'id',
       key: '_id',
-      linkTo: '/users'
+      linkTo: '/ssams'
     },
     {
       name: 'name',
@@ -64,20 +64,6 @@ class Ssams extends Component {
     }
   ];
 
-  componentWillReceiveProps(nextProps) {
-    nextProps.ssams.map((ssam) => {
-      ssam.createdAt = moment(ssam.createdAt).format('YYYY-MM-DD');
-
-      ssam.profile.informationForSsam.serviceCount = ssam.profile.informationForSsam.reservations.length;
-
-      const serviceAmount = _.reduce(ssam.profile.informationForSsam.reservations, (sum, reservation) => {
-        return sum + reservation.price.amount;
-      }, 0);
-
-      ssam.profile.informationForSsam.serviceAmount = this.getPrice(serviceAmount);
-    });
-  }
-
   getPrice = (amount) => {
     return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원';
   };
@@ -89,11 +75,23 @@ class Ssams extends Component {
   };
 
   render() {
-    if (!this.props.isSsamsReady) {
+    if (!this.props.isUsersReady) {
       return (
         <div />
       );
     }
+
+    this.props.ssams.map((ssam) => {
+      ssam.createdAt = moment(ssam.createdAt).format('YYYY-MM-DD');
+
+      ssam.profile.informationForSsam.serviceCount = ssam.profile.informationForSsam.reservations.length;
+
+      const serviceAmount = _.reduce(ssam.profile.informationForSsam.reservations, (sum, reservation) => {
+        return sum + reservation.price.amount;
+      }, 0);
+
+      ssam.profile.informationForSsam.serviceAmount = this.getPrice(serviceAmount);
+    });
 
     return (
       <div>
@@ -118,10 +116,10 @@ class Ssams extends Component {
 }
 
 export default createContainer(() => {
-  const ssamsHandle = Meteor.subscribe('ssams');
+  const usersHandle = Meteor.subscribe('users');
 
   return {
-    isSsamsReady: ssamsHandle.ready(),
+    isUsersReady: usersHandle.ready(),
     ssams: Meteor.users.find({
       'profile.isSsam': true
     }).fetch()

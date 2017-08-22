@@ -1,3 +1,5 @@
+/* eslint "no-undef": "off" */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -25,16 +27,6 @@ export default class DataTable extends Component {
   isInitialized = false;
 
   componentDidMount() {
-    this.initialize();
-  }
-
-  componentDidUpdate(previousProps) {
-    if (this.props.data == previousProps.data) {
-      return;
-    }
-
-    this.isInitialized = false;
-
     this.initialize();
   }
 

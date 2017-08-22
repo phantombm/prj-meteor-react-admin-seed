@@ -1,8 +1,22 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { createContainer } from 'meteor/react-meteor-data';
+import { Meteor } from 'meteor/meteor';
+import _ from 'lodash';
+import { Reservations } from '../../../api/reservations/reservations';
+import moment from 'moment';
 
 import PageHeader from '../../components/PageHeader/PageHeader';
+import Profile from '../../components/Profile/Profile';
 
-export default class Profile extends Component {
+class User extends Component {
+  static propTypes = {
+    isReservationsReady: PropTypes.bool.isRequired,
+    reservations: PropTypes.array.isRequired,
+    isUsersReady: PropTypes.bool.isRequired,
+    user: PropTypes.object.isRequired
+  };
+
   pageHeaderItems = [
     {
       name: '회원관리'
@@ -16,98 +30,150 @@ export default class Profile extends Component {
     }
   ];
 
-  componentDidMount() {
-    $("#sparkline1").sparkline([34, 43, 43, 35, 44, 32, 44, 48], {
-      type: 'line',
-      width: '100%',
-      height: '50',
-      lineColor: '#1ab394',
-      fillColor: "transparent"
-    });
-  }
+  getPrice = (amount) => {
+    return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원';
+  };
 
   render() {
+    if (!this.props.isUsersReady || !this.props.isReservationsReady) {
+      return (
+        <div />
+      );
+    }
+
+    const userProfile = this.props.user.profile;
+
+    const roles = ['사용자'];
+
+    if (userProfile.isOwner) {
+      roles.push('소유자');
+    }
+
+    if (userProfile.isManager) {
+      roles.push('관리자');
+    }
+
+    if (userProfile.isSsam) {
+      roles.push('쌤');
+    }
+
+    const profile = {
+      name: userProfile.name,
+      signInType: userProfile.signInType,
+      roles: roles,
+      introduction: userProfile.informationForSsam.introduction,
+      imageUrl: userProfile.informationForSsam.imageUrl || 'http://file2.instiz.net/data/file2/2016/01/05/8/1/6/816140efeb4b5edb67df6532837ad1e1.jpg'
+    };
+
+    const completedReservations = _.filter(this.props.reservations, (reservation) => {
+      if (reservation.progress == 'waiting for writing review' || reservation.progress == 'completed') {
+        return true;
+      }
+    });
+
+    let phurchaseAmount = _.reduce(completedReservations, (sum, reservation) => {
+      return sum + reservation.price.amount;
+    }, 0);
+
+    phurchaseAmount = this.getPrice(phurchaseAmount);
+
+    const proceedingReservations = _.filter(this.props.reservations, (reservation) => {
+      if (reservation.progress == 'waiting for writing review' || reservation.progress == 'completed') {
+        return false;
+      }
+
+      return true;
+    });
+
+    const statistics = [
+      {
+        firstItem: {
+          name: '서비스 받은 횟수',
+          value: completedReservations.length
+        },
+        secondItem: {
+          name: '서비스 받은 총금액',
+          value: phurchaseAmount
+        }
+      },
+      {
+        firstItem: {
+          name: '서비스 진행중',
+          value: proceedingReservations.length
+        },
+        secondItem: {
+          name: '',
+          value: ''
+        }
+      }
+    ];
+
+    let recentCompletedReservations = _.sortBy(completedReservations, [
+      (reservation) => {
+        return reservation.service.scheduledAt.getTime();
+      }
+    ]);
+
+    recentCompletedReservations = recentCompletedReservations.splice(0, 5);
+
+    const recentPhurchaseAmount = _.reduce(recentCompletedReservations, (sum, reservation) => {
+      return sum + reservation.price.amount;
+    }, 0);
+
+    const recentPhurchaseAmounts = _.map(recentCompletedReservations, (reservation) => {
+      return reservation.price.amount;
+    });
+
+    const graph = {
+      name: '최근 서비스 금액',
+      value: this.getPrice(recentPhurchaseAmount),
+      values: recentPhurchaseAmounts
+    };
+
+    const basicInformation = [
+      {
+        name: '이름',
+        value: userProfile.name
+      },
+      {
+        name: '로그인 방법',
+        value: userProfile.signInType
+      },
+      {
+        name: 'email',
+        value: userProfile.email
+      },
+      {
+        name: '휴대폰 번호',
+        value: userProfile.phoneNumber
+      },
+      {
+        name: '가입일',
+        value: moment(this.props.user.createAt).format('YYYY-MM-DD')
+      }
+    ];
+
     return (
       <div>
         <PageHeader title="프로필" items={this.pageHeaderItems} />
-        <div className="wrapper wrapper-content animated fadeInRight">
-          <div className="row m-b-lg m-t-lg">
-            <div className="col-md-6">
-              <div className="profile-image">
-                <img src="/img/a4.jpg" className="img-circle circle-border m-b-md" alt="profile" />
-              </div>
-              <div className="profile-info">
-                <div className="">
-                  <div>
-                    <h2 className="no-margins">
-                      Alex Smith
-                    </h2>
-                    <h4>Founder of Groupeq</h4>
-                    <small>
-                      There are many variations of passages of Lorem Ipsum available, but the majority
-                      have suffered alteration in some form Ipsum available.
-                    </small>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-3">
-              <table className="table small m-b-xs">
-                <tbody>
-                  <tr>
-                    <td>
-                      <strong>142</strong> Projects
-                    </td>
-                    <td>
-                      <strong>22</strong> Followers
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <strong>61</strong> Comments
-                    </td>
-                    <td>
-                      <strong>54</strong> Articles
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <strong>154</strong> Tags
-                    </td>
-                    <td>
-                      <strong>32</strong> Friends
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div className="col-md-3">
-              <small>Sales in last 24h</small>
-              <h2 className="no-margins">206 480</h2>
-              <div id="sparkline1" />
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-lg-12">
-              <div className="ibox">
-                <div className="ibox-content">
-                  <h3>About Alex Smith</h3>
-                  <p className="small">
-                    There are many variations of passages of Lorem Ipsum available, but the majority have
-                    suffered alteration in some form, by injected humour, or randomised words which don{'\''}t.<br />
-                    <br />
-                    If you are going to use a passage of Lorem Ipsum, you need to be sure there isn{'\''}t
-                    anything embarrassing
-                  </p>
-                  <p className="small font-bold">
-                    <span><i className="fa fa-circle text-navy" /> Online status</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Profile profile={profile} statistics={statistics} graph={graph} basicInformation={basicInformation} />
       </div>
     );
   }
 }
+
+export default createContainer((props) => {
+  const usersHandle = Meteor.subscribe('users');
+  const reservationsHandle = Meteor.subscribe('reservations', props.match.params.id);
+
+  return {
+    isReservationsReady: reservationsHandle.ready(),
+    reservations: Reservations.find({
+      'user.userId': props.match.params.id
+    }).fetch(),
+    isUsersReady: usersHandle.ready(),
+    user: Meteor.users.findOne({
+      _id: props.match.params.id
+    }) || {}
+  };
+}, User);

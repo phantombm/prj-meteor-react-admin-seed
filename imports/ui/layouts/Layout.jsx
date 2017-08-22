@@ -1,3 +1,5 @@
+/* eslint "no-undef": "off" */
+
 import React, { Component } from 'react';
 import { Route } from 'react-router';
 import PropTypes from 'prop-types';
@@ -8,6 +10,8 @@ import Footer from "../components/Footer/Footer";
 import Users from "../pages/Users/Users";
 import User from "../pages/User/User";
 import Ssams from "../pages/Ssams/Ssams";
+import Ssam from "../pages/Ssam/Ssam";
+import TermsOfService from "../pages/TermsOfService/TermsOfService";
 
 export default class Layout extends Component {
   static propTypes = {
@@ -55,7 +59,7 @@ export default class Layout extends Component {
         },
         {
           title: '약관관리',
-          url: '/terms'
+          url: '/termsOfService'
         }
       ]
     },
@@ -164,6 +168,8 @@ export default class Layout extends Component {
           <Route exact path="/users" component={Users} />
           <Route exact path="/users/:id" component={User} />
           <Route exact path="/ssams" component={Ssams} />
+          <Route exact path="/ssams/:id" component={Ssam} />
+          <Route exact path="/termsOfService" component={TermsOfService} />
           <Footer company="makeupforl" period="2017" />
         </div>
       </div>
