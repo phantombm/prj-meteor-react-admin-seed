@@ -15,7 +15,6 @@ class Ssams extends Component {
   };
 
   state = {
-    ssams: [],
     checkedIds: []
   };
 

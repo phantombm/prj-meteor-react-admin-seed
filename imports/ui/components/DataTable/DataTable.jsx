@@ -1,5 +1,3 @@
-/* eslint "no-undef": "off" */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -110,7 +108,7 @@ export default class DataTable extends Component {
     return (
       this.props.fields.map((field, index) => {
         return (
-          <th key={index}>{ field.name }</th>
+          <th key={index} style={{ minWidth: field.minWidth }}>{ field.name }</th>
         );
       })
     );

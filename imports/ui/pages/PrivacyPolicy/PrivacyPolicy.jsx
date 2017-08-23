@@ -60,7 +60,7 @@ class _PrivacyPolicy extends Component {
     return (
       <div>
         <PageHeader title="개인정보 취급방침" items={this.pageHeaderItems} />
-        <div className="wrapper wrapper-content">
+        <div className="wrapper wrapper-content animated fadeInRight">
           <div className="row">
             <div className="col-lg-12">
               <div className="ibox float-e-margins">

@@ -1,5 +1,3 @@
-/* eslint "no-undef": "off" */
-
 import React, { Component } from 'react';
 import { Route } from 'react-router';
 import PropTypes from 'prop-types';
@@ -13,6 +11,14 @@ import Ssams from "../pages/Ssams/Ssams";
 import Ssam from "../pages/Ssam/Ssam";
 import TermsOfService from "../pages/TermsOfService/TermsOfService";
 import PrivacyPolicy from "../pages/PrivacyPolicy/PrivacyPolicy";
+import Notices from "../pages/Notices/Notices";
+import WritingNotice from "../pages/WritingNotice/WritingNotice";
+import EditingNotice from "../pages/EditingNotice/EditingNotice";
+import Faqs from "../pages/Faqs/Faqs";
+import WritingFaq from "../pages/WritingFaq/WritingFaq";
+import EditingFaq from "../pages/EditingFaq/EditingFaq";
+import RemoteNotifications from "../pages/RemoteNotifications/RemoteNotifications";
+import SendingRemoteNotification from "../pages/SendingRemoteNotification/SendingRemoteNotification";
 
 export default class Layout extends Component {
   static propTypes = {
@@ -124,7 +130,7 @@ export default class Layout extends Component {
         },
         {
           title: '푸쉬알람',
-          url: '/pushs'
+          url: '/remoteNotifications'
         }
       ]
     }
@@ -176,6 +182,14 @@ export default class Layout extends Component {
           <Route exact path="/ssams/:id" component={Ssam} />
           <Route exact path="/termsOfService" component={TermsOfService} />
           <Route exact path="/privacyPolicy" component={PrivacyPolicy} />
+          <Route exact path="/notices" component={Notices} />
+          <Route exact path="/notices/write" component={WritingNotice} />
+          <Route exact path="/notices/edit/:id" component={EditingNotice} />
+          <Route exact path="/faqs" component={Faqs} />
+          <Route exact path="/faqs/write" component={WritingFaq} />
+          <Route exact path="/faqs/edit/:id" component={EditingFaq} />
+          <Route exact path="/remoteNotifications" component={RemoteNotifications} />
+          <Route exact path="/remoteNotifications/send" component={SendingRemoteNotification} />
           <Footer company="makeupforl" period="2017" />
         </div>
       </div>

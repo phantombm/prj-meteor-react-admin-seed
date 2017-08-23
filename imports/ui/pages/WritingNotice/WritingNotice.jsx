@@ -1,16 +1,12 @@
 import React, { Component } from 'react';
-import { createContainer } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
-import PropTypes from 'prop-types';
-
-import { TermsOfService } from '../../../api/termsOfService/termsOfService';
+import { Redirect } from 'react-router-dom';
 
 import PageHeader from '../../components/PageHeader/PageHeader';
 
-class _TermsOfService extends Component {
-  static propTypes = {
-    isTermsOfServiceReady: PropTypes.bool.isRequired,
-    termsOfService: PropTypes.object.isRequired
+export default class WritingNotice extends Component {
+  state = {
+    isRedirected: false
   };
 
   pageHeaderItems = [
@@ -18,11 +14,15 @@ class _TermsOfService extends Component {
       name: '앱관리'
     },
     {
-      name: '서비스 이용약관'
+      name: '공지사항',
+      linkTo: '/notices'
+    },
+    {
+      name: '공지사항 쓰기'
     }
   ];
 
-  componentDidUpdate() {
+  componentDidMount() {
     $('.summernote').summernote({
       toolbar: [
         ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
@@ -32,12 +32,17 @@ class _TermsOfService extends Component {
         ['misc', ['undo', 'redo']]
       ]
     });
-
-    $('.summernote').summernote('code', this.props.termsOfService.content);
   }
 
-  onClickSave = () => {
-    Meteor.call('termsOfService.update', {
+  onClickWriting = () => {
+    if ($('.title').val() == '') {
+      toastr.error('제목을 써주세요.');
+
+      return;
+    }
+
+    Meteor.call('notices.insert', {
+      title: $('.title').val(),
       content: $('.summernote').summernote('code')
     }, (error) => {
       if (error) {
@@ -46,26 +51,32 @@ class _TermsOfService extends Component {
         return;
       }
 
-      toastr.success('저장되었습니다.');
+      this.redirect();
+    });
+  };
+
+  redirect = () => {
+    this.setState({
+      isRedirected: true
     });
   };
 
   render() {
-    if (!this.props.isTermsOfServiceReady) {
+    if (this.state.isRedirected) {
       return (
-        <div />
+        <Redirect to="/notices" />
       );
     }
 
     return (
       <div>
-        <PageHeader title="서비스 이용약관" items={this.pageHeaderItems} />
+        <PageHeader title="공지사항 쓰기" items={this.pageHeaderItems} />
         <div className="wrapper wrapper-content animated fadeInRight">
           <div className="row">
             <div className="col-lg-12">
               <div className="ibox float-e-margins">
-                <div className="ibox-title">
-                  <h5>서비스 이용약관</h5>
+                <div className="form-group">
+                  <input className="form-control title" placeholder="제목" />
                 </div>
                 <div className="ibox-content no-padding">
                   <div className="summernote" />
@@ -75,7 +86,7 @@ class _TermsOfService extends Component {
           </div>
           <div className="row">
             <div className="col-lg-12">
-              <button onClick={this.onClickSave} className="btn btn-primary">저장</button>
+              <button onClick={this.onClickWriting} className="btn btn-primary">쓰기</button>
             </div>
           </div>
           <div className="row">
@@ -88,12 +99,3 @@ class _TermsOfService extends Component {
     );
   }
 }
-
-export default createContainer(() => {
-  const termsOfServiceHandle = Meteor.subscribe('termsOfService');
-
-  return {
-    isTermsOfServiceReady: termsOfServiceHandle.ready(),
-    termsOfService: TermsOfService.findOne({}) || {}
-  };
-}, _TermsOfService);
