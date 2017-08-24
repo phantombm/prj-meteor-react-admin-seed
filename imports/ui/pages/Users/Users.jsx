@@ -63,6 +63,49 @@ class Users extends Component {
     }
   ];
 
+  onClickSending = () => {
+    if ($('.title').val() == '') {
+      toastr.error('제목을 써주세요.');
+
+      return;
+    }
+
+    if ($('.content').val() == '') {
+      toastr.error('내용을 써주세요.');
+
+      return;
+    }
+
+    Meteor.call('sendRemoteNotifications', {
+      type: 'partial',
+      to: this.state.checkedIds,
+      message: {
+        title: $('.title').val(),
+        body: $('.content').val()
+      }
+    }, (error) => {
+      if (error) {
+        toastr.error(error.reason);
+
+        return;
+      }
+
+      Meteor.call('remoteNotifications.insert', {
+        type: 'partial',
+        title: $('.title').val(),
+        content: $('.content').val()
+      }, (error) => {
+        if (error) {
+          toastr.error(error.reason);
+
+          return;
+        }
+
+        $('#sendingRemoteNotification').modal('hide');
+      });
+    });
+  };
+
   getPrice = (amount) => {
     return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원';
   };
@@ -70,6 +113,14 @@ class Users extends Component {
   onChangeChecked = (checkedIds) => {
     this.setState({
       checkedIds: checkedIds
+    });
+  };
+
+  onClickChatting = () => {
+    Meteor.call('chats.insert', {
+      type: 'text',
+      to: this.state.checkedIds,
+      message: '채팅을 시작합니다.'
     });
   };
 
@@ -94,6 +145,32 @@ class Users extends Component {
 
     return (
       <div>
+        <div className="modal inmodal" id="sendingRemoteNotification" tabIndex="-1" role="dialog">
+          <div className="modal-dialog">
+            <div className="modal-content animated bounceInRight">
+              <div className="modal-header">
+                <i className="fa fa-paper-plane modal-icon" />
+                <h4 className="modal-title">푸쉬 알람</h4>
+              </div>
+              <div className="modal-body">
+                <p>
+                  푸쉬알람을 보냅니다.<br />
+                  다수의 사용자에게 보내는 것이므로 신중히 작성하시기 바랍니다.
+                </p>
+                <div className="form-group">
+                  <input placeholder="제목" className="form-control title" />
+                </div>
+                <div className="form-group">
+                  <input placeholder="내용" className="form-control content" />
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-primary" onClick={this.onClickSending}>보내기</button>
+                <button className="btn btn-white" data-dismiss="modal">취소</button>
+              </div>
+            </div>
+          </div>
+        </div>
         <PageHeader title="고객관리" items={this.pageHeaderItems} />
         <div className="wrapper wrapper-content animated fadeInRight">
           <div className="row">
@@ -106,6 +183,17 @@ class Users extends Component {
                   <DataTable data={this.props.users} name="users" fields={this.fields} onChangeChecked={this.onChangeChecked} />
                 </div>
               </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-lg-12">
+              <button data-toggle="modal" data-target="#sendingRemoteNotification" className="btn btn-primary">푸쉬알람 보내기</button>
+              <button onClick={this.onClickChatting} className="btn btn-primary" style={{ marginLeft: '10px' }}>채팅 시작하기</button>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-lg-12">
+              <div style={{ height: '30px' }} />
             </div>
           </div>
         </div>

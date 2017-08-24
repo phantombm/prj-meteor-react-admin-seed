@@ -23,10 +23,10 @@ new ValidatedMethod({
     }
     else if (type == 'partial') {
       users = Meteor.users.find({
-        $in: {
-          _id: to
+        _id: {
+          $in: to
         }
-      });
+      }).fetch();
     }
 
     notificationTokens = _.reduce(users, (notificationTokens, user) => {

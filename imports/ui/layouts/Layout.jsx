@@ -19,6 +19,9 @@ import WritingFaq from "../pages/WritingFaq/WritingFaq";
 import EditingFaq from "../pages/EditingFaq/EditingFaq";
 import RemoteNotifications from "../pages/RemoteNotifications/RemoteNotifications";
 import SendingRemoteNotification from "../pages/SendingRemoteNotification/SendingRemoteNotification";
+import Services from "../pages/Services/Services";
+import ServiceTypes from "../pages/ServiceTypes/ServiceTypes";
+import Chats from "../pages/Chats/Chats";
 
 export default class Layout extends Component {
   static propTypes = {
@@ -38,8 +41,8 @@ export default class Layout extends Component {
       icon: 'fa-desktop',
       subItems: [
         {
-          title: '채팅상담',
-          url: '/chatRooms'
+          title: '채팅',
+          url: '/chats'
         },
         {
           title: '채팅관리',
@@ -95,8 +98,12 @@ export default class Layout extends Component {
       icon: 'fa-cog',
       subItems: [
         {
-          title: '상품',
-          url: '/goods'
+          title: '서비스 카테고리',
+          url: '/serviceTypes'
+        },
+        {
+          title: '서비스',
+          url: '/services'
         },
         {
           title: '포트폴리오',
@@ -190,6 +197,9 @@ export default class Layout extends Component {
           <Route exact path="/faqs/edit/:id" component={EditingFaq} />
           <Route exact path="/remoteNotifications" component={RemoteNotifications} />
           <Route exact path="/remoteNotifications/send" component={SendingRemoteNotification} />
+          <Route exact path="/services" component={Services} />
+          <Route exact path="/serviceTypes" component={ServiceTypes} />
+          <Route exact path="/chats" component={Chats} />
           <Footer company="makeupforl" period="2017" />
         </div>
       </div>

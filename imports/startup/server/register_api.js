@@ -11,3 +11,7 @@ import '../../api/faqs/methods';
 import '../../api/remoteNotifications/server/publications';
 import '../../api/remoteNotifications/methods';
 import '../../api/methods';
+import '../../api/services/server/publications';
+import '../../api/serviceTypes/server/publications';
+import '../../api/chats/server/publications';
+import '../../api/chats/methods';
