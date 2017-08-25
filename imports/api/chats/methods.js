@@ -7,32 +7,26 @@ new ValidatedMethod({
   name: 'chats.insert',
   validate: new SimpleSchema({
     type: { type: String },
-    to: { type: [String] },
+    userIds: { type: [String] },
     message: { type: String },
     imageUrl: { type: String, optional: true }
   }).validator(),
-  run({ type, to, message, imageUrl }) {
-    to.forEach((to) => {
-      const formUser = Meteor.users.findOne({
-        _id: this.userId
-      });
-
-      const toUser = Meteor.users.findOne({
-        _id: to
+  run({ type, userIds, message, imageUrl }) {
+    userIds.forEach((userId) => {
+      const user = Meteor.users.findOne({
+        _id: userId
       });
 
       Chats.insert({
         type: type,
-        from: {
-          userId: 'asdfadsf',
-          name: '관리자'
-        },
-        to: {
-          userId: to,
-          name: toUser.profile.name
+        user: {
+          id: userId,
+          name: user.profile.name
         },
         message: message,
         imageUrl: imageUrl || '',
+        isSent: false,
+        isRead: false,
         createdAt: new Date()
       });
     });

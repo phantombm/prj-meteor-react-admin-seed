@@ -4,6 +4,7 @@ import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import moment from 'moment';
+import { Redirect } from 'react-router-dom';
 
 import DataTable from '../../components/DataTable/DataTable';
 import PageHeader from '../../components/PageHeader/PageHeader';
@@ -15,7 +16,8 @@ class Users extends Component {
   };
 
   state = {
-    checkedIds: []
+    checkedIds: [],
+    isRedirected: false
   };
 
   fields = [
@@ -119,8 +121,18 @@ class Users extends Component {
   onClickChatting = () => {
     Meteor.call('chats.insert', {
       type: 'text',
-      to: this.state.checkedIds,
+      userIds: this.state.checkedIds,
       message: '채팅을 시작합니다.'
+    }, (error) => {
+      if (error) {
+        toastr.error(error.reason);
+
+        return;
+      }
+
+      this.setState({
+        isRedirected: true
+      });
     });
   };
 
@@ -128,6 +140,12 @@ class Users extends Component {
     if (!this.props.isUsersReady) {
       return (
         <div />
+      );
+    }
+
+    if (this.state.isRedirected) {
+      return (
+        <Redirect to="/chats" />
       );
     }
 

@@ -15,7 +15,15 @@ Accounts.validateLoginAttempt((attempt) => {
 });
 
 Meteor.startup(() => {
+  if (!Meteor.settings.ownerEmail) {
+    return;
+  }
+
   const user = Accounts.findUserByEmail(Meteor.settings.ownerEmail);
+
+  if (!user) {
+    return;
+  }
 
   Roles.addUsersToRoles(user._id, 'owner', Roles.GLOBAL_GROUP);
 });
