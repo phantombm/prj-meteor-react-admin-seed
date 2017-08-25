@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Meteor } from 'meteor/meteor';
 
 export default class TopNavigation extends Component {
   onClickMinimalization = (event) => {
@@ -25,6 +26,10 @@ export default class TopNavigation extends Component {
     }
   };
 
+  onClickSignOut = () => {
+    Meteor.logout();
+  };
+
   render() {
     return (
       <div className="row border-bottom">
@@ -34,7 +39,7 @@ export default class TopNavigation extends Component {
           </div>
           <ul className="nav navbar-top-links navbar-right">
             <li>
-              <a href="#"><i className="fa fa-sign-out" /> Log out</a>
+              <a href="#" onClick={this.onClickSignOut}><i className="fa fa-sign-out" /> Logout</a>
             </li>
           </ul>
         </nav>

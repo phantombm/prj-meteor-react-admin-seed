@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import _ from 'lodash';
+import _ from 'lodash'
+import { Metoer } from 'meteor/meteor';
 
 export default class Navigation extends Component {
   static propTypes = {
     match: PropTypes.object.isRequired,
     items: PropTypes.array.isRequired,
-    logo: PropTypes.string.isRequired
+    logo: PropTypes.string.isRequired,
+    user: PropTypes.object.isRequired
   };
 
   componentDidMount() {
@@ -61,6 +63,10 @@ export default class Navigation extends Component {
     });
   };
 
+  onClickSignOut = () => {
+    Meteor.logout();
+  };
+
   render() {
     return (
       <nav className="navbar-default navbar-static-side" role="navigation">
@@ -70,14 +76,14 @@ export default class Navigation extends Component {
               <div className="dropdown profile-element">
                 <a data-toggle="dropdown" className="dropdown-toggle" href="#">
                   <span className="clear">
-                    <span className="block m-t-xs"><strong className="font-bold">David Williams</strong></span>
-                    <span className="text-muted text-xs block">Art Director <b className="caret" /></span>
+                    <span className="block m-t-xs"><strong className="font-bold">{ this.props.user.profile.name }</strong></span>
+                    <span className="text-muted text-xs block">{ this.props.user.profile.email } <b className="caret" /></span>
                   </span>
                 </a>
                 <ul className="dropdown-menu animated fadeInRight m-t-xs">
-                  <li><a href="/profile">Profile</a></li>
+                  <li><Link to={`/users/${this.props.user._id}`}>Profile</Link></li>
                   <li className="divider" />
-                  <li><a href="/logout">Logout</a></li>
+                  <li><a href="#" onClick={this.onClickSignOut}>Logout</a></li>
                 </ul>
               </div>
               <div className="logo-element">{ this.props.logo }</div>

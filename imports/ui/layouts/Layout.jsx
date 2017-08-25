@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { Route } from 'react-router';
 import PropTypes from 'prop-types';
+import { createContainer } from 'meteor/react-meteor-data';
+import { Meteor } from 'meteor/meteor';
+import { Redirect } from 'react-router-dom';
 
 import Navigation from '../components/Navigation/Navigation';
 import TopNavigation from '../components/TopNavigation/TopNavigation';
@@ -23,9 +26,11 @@ import Services from "../pages/Services/Services";
 import ServiceTypes from "../pages/ServiceTypes/ServiceTypes";
 import Chats from "../pages/Chats/Chats";
 
-export default class Layout extends Component {
+class Layout extends Component {
   static propTypes = {
-    match: PropTypes.object.isRequired
+    match: PropTypes.object.isRequired,
+    isLoggingIn: PropTypes.bool.isRequired,
+    user: PropTypes.object.isRequired
   };
 
   navigationItems = [
@@ -178,9 +183,21 @@ export default class Layout extends Component {
   }
 
   render() {
+    if (this.props.isLoggingIn) {
+      return (
+        <div />
+      );
+    }
+
+    if (!this.props.user._id) {
+      return (
+        <Redirect to="/signIn" />
+      );
+    }
+
     return (
       <div id="wrapper">
-        <Navigation match={this.props.match} items={this.navigationItems} logo="WB+" />
+        <Navigation match={this.props.match} items={this.navigationItems} logo="WB+" user={this.props.user} />
         <div id="page-wrapper" className="gray-bg">
           <TopNavigation />
           <Route exact path="/users" component={Users} />
@@ -206,3 +223,10 @@ export default class Layout extends Component {
     );
   }
 }
+
+export default createContainer(() => {
+  return {
+    isLoggingIn: Meteor.loggingIn(),
+    user: Meteor.user() || {}
+  };
+}, Layout);
