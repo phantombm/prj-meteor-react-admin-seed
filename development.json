@@ -1,3 +1,23 @@
 {
-  "ownerEmail": "admin@test.com"
+  "ownerEmail": "admin@test.com",
+  "private": {
+    "AWS": {
+      "AWSAccessKeyId": "AKIAIYOWFZOZHMR74PAA",
+      "AWSSecretAccessKey": "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",
+      "region": "ap-northeast-2",
+      "acl": "public-read",
+      "imageUpload": {
+        "bucket": "whatabeauty.image",
+        "cdn": "http://d2tgwl5qjwo5bq.cloudfront.net"
+      },
+      "thumbnailUpload": {
+        "bucket": "whatabeauty.image",
+        "cdn": "http://d2tgwl5qjwo5bq.cloudfront.net"
+      },
+      "fileUpload": {
+        "bucket": "whatabeauty.image",
+        "cdn": "http://d2tgwl5qjwo5bq.cloudfront.net"
+      }
+    }
+  }
 }

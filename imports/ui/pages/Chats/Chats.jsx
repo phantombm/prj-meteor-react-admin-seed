@@ -5,9 +5,11 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
+import { imageUploader } from 'meteor/smartlinkcom:awsuploader';
 
 import PageHeader from '../../components/PageHeader/PageHeader';
 import { Chats } from '../../../api/chats/chats';
+import ImageCropper from '../../components/ImageCropper/ImageCropper';
 
 class _Chats extends Component {
   static propTypes = {
@@ -37,23 +39,46 @@ class _Chats extends Component {
 
   renderMessages = (messages) => {
     return messages.map((message) => {
-      return (
-        <div key={message._id} className={`chat-message ${ message.isSent ? 'left' : 'right' }`}>
-          <img className="message-avatar" src="img/a1.jpg" alt="" />
-          <div className="message">
-            { message.isSent &&
+      if (message.type == 'text') {
+        return (
+          <div key={message._id} className={`chat-message ${ message.isSent ? 'left' : 'right' }`}>
+            <img className="message-avatar" src="img/a1.jpg" alt="" />
+            <div className="message">
+              { message.isSent &&
               <Link className="message-author" to={`/users/${message.user.id}`}>{ message.user.name }</Link>
-            }
-            { !message.isSent &&
+              }
+              { !message.isSent &&
               <span className="message-author">상담원</span>
-            }
-            <span className="message-date">{ moment(message.createdAt).format('YYYY-MM-DD HH:mm:ss') }</span>
-            <div className="message-content">
-              { this.renderMessage(message.message) }
+              }
+              <span className="message-date">{ moment(message.createdAt).format('YYYY-MM-DD HH:mm:ss') }</span>
+              <div className="message-content">
+                { this.renderMessage(message.message) }
+              </div>
             </div>
           </div>
-        </div>
-      );
+        );
+      }
+      else if (message.type == 'image') {
+        return (
+          <div key={message._id} className={`chat-message ${ message.isSent ? 'left' : 'right' }`}>
+            <img className="message-avatar" src="img/a1.jpg" alt="" />
+            <div className="message">
+              { message.isSent &&
+              <Link className="message-author" to={`/users/${message.user.id}`}>{ message.user.name }</Link>
+              }
+              { !message.isSent &&
+              <span className="message-author">상담원</span>
+              }
+              <span className="message-date">{ moment(message.createdAt).format('YYYY-MM-DD HH:mm:ss') }</span>
+              <div className="message-content">
+                <div className="lightBoxGallery">
+                  <a href={message.imageUrl} title="Image from Unsplash" data-gallery=""><img src={message.imageUrl} style={{ width: '50%' }} /></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      }
     });
   };
 
@@ -67,22 +92,69 @@ class _Chats extends Component {
     });
   };
 
-  onClickUser = (chat) => {
+  onClickUser = (room) => {
     this.setState({
-      currentUserId: chat[0].user.id,
-      currentUserName: chat[0].user.name
+      currentUserId: room.userId,
+      currentUserName: room.userName,
+    });
+
+    Meteor.call('chats.setIsRead', {
+      userId: room.userId,
+    }, (error) => {
+      if (error) {
+        toastr.error(error.reason);
+      }
     });
   };
 
   renderUsers = (groupedChats) => {
-    return _.map(groupedChats, (chat, key) => {
+    let rooms = _.map(groupedChats, (chats, key) => {
+      recentChat = _.maxBy(chats, (chat) => {
+        return chat.createdAt.getTime()
+      });
+
+      return {
+        userId: key,
+        userName: chats[0].user.name,
+        chats: chats,
+        recentChat: recentChat
+      };
+    });
+
+    rooms = _.sortBy(rooms, (room) => {
+      return -room.recentChat.createdAt.getTime();
+    });
+
+    return _.map(rooms, (room) => {
+      const length = _.reduce(room.chats, (sum, chat) => {
+        if (chat.isSent && !chat.isRead) {
+          return sum + 1;
+        }
+
+        return sum;
+      }, 0);
+
+      room.unreadCount = length;
+
+      let isVisible = true;
+
+      if (room.unreadCount == 0) {
+        isVisible = false;
+      }
+
+      if (room.userId == this.state.currentUserId) {
+        isVisible = false;
+      }
+
       return (
-        <div key={key} className="chat-user">
+        <div key={room.userId} className="chat-user">
           <img className="chat-avatar" src="img/a4.jpg" alt="" />
           <div className="chat-user-name" style={{ display: 'inline-block' }}>
-            <a href="#" onClick={() => { this.onClickUser(chat) }}>{ chat[0].user.name }</a>
+            <span style={{ cursor: 'pointer' }} onClick={() => { this.onClickUser(room) }}>{ room.userName }</span>
           </div>
-          <div style={{ display: 'inline-block', top: '2px', left: '-10px', paddingLeft: '4px', paddingRight: '4px', height: '14px', backgroundColor: '#ff0000', color: '#ffffff', borderRadius: '7px', fontSize: '11px', textAlign: 'center' }}>{ chat.length }</div>
+          { isVisible &&
+            <span className="badge badge-pill badge-danger">{ room.unreadCount }</span>
+          }
         </div>
       );
     });
@@ -116,6 +188,40 @@ class _Chats extends Component {
     });
   };
 
+  onKeyPress = (event) => {
+    if (event.key == 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+
+      this.onClickSending();
+    }
+  };
+
+  onClickSendingImage = () => {
+    this.imageCropperRef.getDataUrl((file) => {
+      imageUploader.send(file, (error, downloadUrl) => {
+        if (error) {
+          toastr.error(error);
+
+          return;
+        }
+
+        Meteor.call('chats.insert', {
+          type: 'image',
+          userIds: [this.state.currentUserId],
+          imageUrl: downloadUrl
+        }, (error) => {
+          if (error) {
+            toastr.error(error.reason);
+
+            return;
+          }
+
+          $('#sendingImage').modal('hide');
+        });
+      });
+    });
+  };
+
   render() {
     if (!this.props.isChatsReady) {
       return (
@@ -144,6 +250,28 @@ class _Chats extends Component {
 
     return (
       <div>
+        <div id="blueimp-gallery" className="blueimp-gallery">
+          <div className="slides" />
+          <h3 className="title" />
+          <a className="prev">‹</a>
+          <a className="next">›</a>
+          <a className="close">×</a>
+          <a className="play-pause" />
+          <ol className="indicator" />
+        </div>
+        <div className="modal inmodal" id="sendingImage" tabIndex="-1" role="dialog">
+          <div className="modal-dialog">
+            <div className="modal-content animated bounceInRight">
+              <div className="modal-body">
+                <ImageCropper ref={(ref) => { this.imageCropperRef = ref; }} />
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-primary" onClick={this.onClickSendingImage}>보내기</button>
+                <button className="btn btn-white" data-dismiss="modal">취소</button>
+              </div>
+            </div>
+          </div>
+        </div>
         <PageHeader title="쌤관리" items={this.pageHeaderItems} />
         <div className="wrapper wrapper-content animated fadeInRight">
           <div className="row">
@@ -169,7 +297,7 @@ class _Chats extends Component {
                     <div className="col-lg-12">
                       <div className="chat-message-form">
                         <div className="form-group">
-                          <textarea className="form-control message-input" placeholder="Enter message text" id="message" />
+                          <textarea className="form-control message-input" placeholder="enter message. 'shift + enter' functions as line break. enter will directly send a message." id="message" onKeyPress={this.onKeyPress} />
                         </div>
                       </div>
                     </div>
@@ -182,6 +310,7 @@ class _Chats extends Component {
                   <div className="row">
                     <div className="col-lg-12">
                       <button onClick={this.onClickSending} className="btn btn-primary" style={{ marginLeft: '10px' }}>전송</button>
+                      <button data-toggle="modal" data-target="#sendingImage" onClick={this.initiaiizeImageCropper} className="btn btn-primary" style={{ marginLeft: '10px' }}>이미지 전송</button>
                     </div>
                   </div>
                   <div className="row">

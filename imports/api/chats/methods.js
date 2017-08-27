@@ -8,7 +8,7 @@ new ValidatedMethod({
   validate: new SimpleSchema({
     type: { type: String },
     userIds: { type: [String] },
-    message: { type: String },
+    message: { type: String, optional: true },
     imageUrl: { type: String, optional: true }
   }).validator(),
   run({ type, userIds, message, imageUrl }) {
@@ -23,12 +23,31 @@ new ValidatedMethod({
           id: userId,
           name: user.profile.name
         },
-        message: message,
+        message: message || '',
         imageUrl: imageUrl || '',
         isSent: false,
         isRead: false,
         createdAt: new Date()
       });
+    });
+  }
+});
+
+new ValidatedMethod({
+  name: 'chats.setIsRead',
+  validate: new SimpleSchema({
+    userId: { type: String }
+  }).validator(),
+  run({ userId }) {
+    Chats.update({
+      'user.id': userId,
+      isSent: true
+    }, {
+      $set: {
+        isRead: true
+      }
+    }, {
+      multi: true
     });
   }
 });
