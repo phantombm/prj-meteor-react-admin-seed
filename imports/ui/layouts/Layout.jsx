@@ -25,6 +25,8 @@ import SendingRemoteNotification from "../pages/SendingRemoteNotification/Sendin
 import Services from "../pages/Services/Services";
 import ServiceTypes from "../pages/ServiceTypes/ServiceTypes";
 import Chats from "../pages/Chats/Chats";
+import Brands from "../pages/Brands/Brands";
+import AddingBrand from "../pages/AddingBrand/AddingBrand";
 
 class Layout extends Component {
   static propTypes = {
@@ -88,12 +90,16 @@ class Layout extends Component {
       icon: 'fa-user',
       subItems: [
         {
-          title: '쌤관리',
+          title: '쌤',
           url: '/ssams'
         },
         {
-          title: '고객관리',
+          title: '고객',
           url: '/users'
+        },
+        {
+          title: '파트너',
+          url: '/brands'
         }
       ]
     },
@@ -217,6 +223,8 @@ class Layout extends Component {
           <Route exact path="/services" component={Services} />
           <Route exact path="/serviceTypes" component={ServiceTypes} />
           <Route exact path="/chats" component={Chats} />
+          <Route exact path="/brands" component={Brands} />
+          <Route exact path="/brands/add" component={AddingBrand} />
           <Footer company="makeupforl" period="2017" />
         </div>
       </div>

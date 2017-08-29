@@ -36,3 +36,15 @@ new ValidatedMethod({
     });
   }
 });
+
+new ValidatedMethod({
+  name: 'notices.delete',
+  validate: new SimpleSchema({
+    noticeId: { type: String }
+  }).validator(),
+  run({ noticeId }) {
+    Notices.remove({
+      _id: noticeId
+    });
+  }
+});

@@ -15,3 +15,5 @@ import '../../api/services/server/publications';
 import '../../api/serviceTypes/server/publications';
 import '../../api/chats/server/publications';
 import '../../api/chats/methods';
+import '../../api/brands/server/publications';
+import '../../api/brands/methods';

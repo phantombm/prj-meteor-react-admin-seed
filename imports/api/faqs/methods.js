@@ -40,3 +40,15 @@ new ValidatedMethod({
     });
   }
 });
+
+new ValidatedMethod({
+  name: 'faqs.delete',
+  validate: new SimpleSchema({
+    faqId: { type: String }
+  }).validator(),
+  run({ faqId }) {
+    Faqs.remove({
+      _id: faqId
+    });
+  }
+});

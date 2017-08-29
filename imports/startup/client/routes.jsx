@@ -24,6 +24,7 @@ export const renderRoutes = () => (
       <Route path="/services" component={Layout} />
       <Route path="/serviceTypes" component={Layout} />
       <Route path="/chats" component={Layout} />
+      <Route path="/brands" component={Layout} />
     </div>
   </Router>
 );

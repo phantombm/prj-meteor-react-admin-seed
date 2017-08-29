@@ -34,20 +34,43 @@ class _Faqs extends Component {
       }
     ]);
 
-    return faqs.map((faqs) => {
+    return faqs.map((faq) => {
       return (
-        <tr key={faqs._id}>
+        <tr key={faq._id}>
           <td className="project-title">
-            <Link to={`/faqs/edit/${faqs._id}`}>{ faqs.title }</Link><br />
-            <small>{ moment(faqs.createdAt).format('YYYY-MM-DD HH:mm') }</small>
+            <Link to={`/faqs/edit/${faq._id}`}>{ faq.title }</Link><br />
+            <small>{ moment(faq.createdAt).format('YYYY-MM-DD HH:mm') }</small>
           </td>
           <td className="project-actions">
-            <Link to={`/faqs/edit/${faqs._id}`}>
-              <div className="btn btn-white btn-sm"><i className="fa fa-pencil" /> 수정</div>
-            </Link>
+            <Link to={`/faqs/edit/${faq._id}`} className="btn btn-white btn-sm"><i className="fa fa-pencil" /> 수정</Link>
+            <div onClick={() => { this.onClickDeletingFaq(faq); }} className="btn btn-danger btn-sm" style={{ marginLeft: 5 }}><i className="fa fa-close" /> 삭제</div>
           </td>
         </tr>
       );
+    });
+  };
+
+  onClickDeletingFaq = (faq) => {
+    swal({
+      title: '삭제하시겠습니까?',
+      text: `${faq.title}을 삭제합니다.`,
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ed5565',
+      confirmButtonText: '삭제',
+      closeOnConfirm: false
+    }, function () {
+      Meteor.call('faqs.delete', {
+        faqId: faq._id
+      }, (error) => {
+        if (error) {
+          toastr.error(error.reason);
+
+          return;
+        }
+
+        swal('삭제되었습니다.', '', 'success');
+      });
     });
   };
 

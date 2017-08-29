@@ -36,12 +36,35 @@ class _Notices extends Component {
             <small>{ moment(notice.createdAt).format('YYYY-MM-DD HH:mm') }</small>
           </td>
           <td className="project-actions">
-            <Link to={`/notices/edit/${notice._id}`}>
-              <div className="btn btn-white btn-sm"><i className="fa fa-pencil" /> 수정</div>
-            </Link>
+            <Link to={`/notices/edit/${notice._id}`} className="btn btn-white btn-sm"><i className="fa fa-pencil" /> 수정</Link>
+            <div onClick={() => { this.onClickDeletingNotice(notice); }} className="btn btn-danger btn-sm" style={{ marginLeft: 5 }}><i className="fa fa-close" /> 삭제</div>
           </td>
         </tr>
       );
+    });
+  };
+
+  onClickDeletingNotice = (notice) => {
+    swal({
+      title: '삭제하시겠습니까?',
+      text: `${notice.title}을 삭제합니다.`,
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ed5565',
+      confirmButtonText: '삭제',
+      closeOnConfirm: false
+    }, function () {
+      Meteor.call('notices.delete', {
+        noticeId: notice._id
+      }, (error) => {
+        if (error) {
+          toastr.error(error.reason);
+
+          return;
+        }
+
+        swal('삭제되었습니다.', '', 'success');
+      });
     });
   };
 

@@ -197,6 +197,12 @@ class _Chats extends Component {
   };
 
   onClickSendingImage = () => {
+    if (!this.state.currentUserId) {
+      toastr.error('채팅할 사용자를 선택해주세요.');
+
+      return;
+    }
+
     this.imageCropperRef.getDataUrl((file) => {
       imageUploader.send(file, (error, downloadUrl) => {
         if (error) {
@@ -310,7 +316,7 @@ class _Chats extends Component {
                   <div className="row">
                     <div className="col-lg-12">
                       <button onClick={this.onClickSending} className="btn btn-primary" style={{ marginLeft: '10px' }}>전송</button>
-                      <button data-toggle="modal" data-target="#sendingImage" onClick={this.initiaiizeImageCropper} className="btn btn-primary" style={{ marginLeft: '10px' }}>이미지 전송</button>
+                      <button data-toggle="modal" data-target="#sendingImage" className="btn btn-primary" style={{ marginLeft: '10px' }}>이미지 전송</button>
                     </div>
                   </div>
                   <div className="row">
