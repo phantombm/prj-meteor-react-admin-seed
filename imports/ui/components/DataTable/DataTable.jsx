@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
+import md5 from 'blueimp-md5';
 
 export default class DataTable extends Component {
   static propTypes = {
@@ -28,20 +29,46 @@ export default class DataTable extends Component {
     this.initialize();
   }
 
+  componentWillUpdate(nextProps) {
+    if (this.isSameData(this.props.data, nextProps.data)) {
+      return;
+    }
+
+    this.destroy();
+  }
+
+  isSameData = (currentData, nextData) => {
+    const previousConcatenatedString = _.reduce(currentData, (concatenatedString, data) => {
+      return `${concatenatedString}${data}`;
+    }, '');
+
+    const nextConcatenatedString = _.reduce(nextData, (concatenatedString, data) => {
+      return `${concatenatedString}${data}`;
+    }, '');
+
+    if (md5(previousConcatenatedString) == md5(nextConcatenatedString)) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  };
+
   componentDidUpdate(previousProps) {
-    if (this.props.data == previousProps.data) {
+    if (this.isSameData(previousProps.data, this.props.data)) {
       return;
     }
 
     this.isInitialized = false;
 
-    setTimeout(() => {
-      this.initialize();
-    }, 2000);
+    this.initialize();
   }
 
+  destroy = () => {
+    this.dataTable.destroy();
+  };
+
   initialize = () => {
-    console.log('asdf');
     this.dataTable = $(`.data-table.${this.props.name}`).DataTable({
       dom: '<"html5buttons"B>lTfgitp',
       buttons: [
@@ -60,7 +87,6 @@ export default class DataTable extends Component {
           }
         }
       ],
-      destroy: true,
       order: [],
       columnDefs: [
         {

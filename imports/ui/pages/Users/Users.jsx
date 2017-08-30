@@ -182,7 +182,7 @@ class Users extends Component {
     let users = _.cloneDeep(this.props.users);
 
     users = _.filter(users, (user) => {
-      return moment(user.profile.createdAt) >= moment(this.state.startDate) && moment(user.profile.createdAt) <= moment(this.state.endDate);
+      return moment(user.profile.createdAt).format('YYYY-MM-DD') >= moment(this.state.startDate).format('YYYY-MM-DD') && moment(user.profile.createdAt).format('YYYY-MM-DD') <= moment(this.state.endDate).format('YYYY-MM-DD');
     });
 
     users.map((user) => {
@@ -239,9 +239,9 @@ class Users extends Component {
                       <div className="form-group" id="data_5">
                         <label className="font-normal">가입일 검색</label>
                         <div className="input-daterange input-group" id="datepicker">
-                          <input type="text" className="input-sm form-control" id="startDate" />
+                          <input type="text" className="input-sm form-control" id="startDate" defaultValue={moment().format('YYYY-MM-DD')} />
                           <span className="input-group-addon">to</span>
-                          <input type="text" className="input-sm form-control" id="endDate" />
+                          <input type="text" className="input-sm form-control" id="endDate" defaultValue={moment().format('YYYY-MM-DD')} />
                         </div>
                       </div>
                     </div>
