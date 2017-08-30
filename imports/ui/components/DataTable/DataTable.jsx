@@ -28,7 +28,20 @@ export default class DataTable extends Component {
     this.initialize();
   }
 
+  componentDidUpdate(previousProps) {
+    if (this.props.data == previousProps.data) {
+      return;
+    }
+
+    this.isInitialized = false;
+
+    setTimeout(() => {
+      this.initialize();
+    }, 2000);
+  }
+
   initialize = () => {
+    console.log('asdf');
     this.dataTable = $(`.data-table.${this.props.name}`).DataTable({
       dom: '<"html5buttons"B>lTfgitp',
       buttons: [

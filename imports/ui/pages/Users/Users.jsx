@@ -17,18 +17,16 @@ class Users extends Component {
 
   state = {
     checkedIds: [],
-    isRedirected: false
+    isRedirected: false,
+    startDate: moment().format('YYYY-MM-DD'),
+    endDate: moment().format('YYYY-MM-DD')
   };
 
   fields = [
     {
-      name: 'id',
-      key: '_id',
-      linkTo: '/users'
-    },
-    {
       name: 'name',
-      key: 'profile.name'
+      key: 'profile.name',
+      linkTo: '/users'
     },
     {
       name: 'social',
@@ -136,6 +134,38 @@ class Users extends Component {
     });
   };
 
+  componentDidUpdate() {
+    if (this.isInitialized) {
+      return;
+    }
+
+    $.fn.datepicker.dates['ko'] = {
+      days: ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'],
+      daysShort: ['일', '월', '화', '수', '목', '금', '토'],
+      daysMin: ['일', '월', '화', '수', '목', '금', '토'],
+      months: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+      monthsShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+      today: '오늘',
+      clear: '삭제',
+      format: 'yyyy-mm-dd',
+      titleFormat: 'yyyy년 mm월'
+    };
+    
+    $('#data_5 .input-daterange').datepicker({
+      keyboardNavigation: false,
+      forceParse: false,
+      autoclose: true,
+      language: 'ko'
+    }).on('changeDate', () => {
+      this.setState({
+        startDate: $('#startDate').val(),
+        endDate: $('#endDate').val()
+      });
+    });
+
+    this.isInitialized = true;
+  }
+
   render() {
     if (!this.props.isUsersReady) {
       return (
@@ -149,7 +179,13 @@ class Users extends Component {
       );
     }
 
-    this.props.users.map((user) => {
+    let users = _.cloneDeep(this.props.users);
+
+    users = _.filter(users, (user) => {
+      return moment(user.profile.createdAt) >= moment(this.state.startDate) && moment(user.profile.createdAt) <= moment(this.state.endDate);
+    });
+
+    users.map((user) => {
       user.createdAt = moment(user.createdAt).format('YYYY-MM-DD');
 
       user.profile.phurchaseCount = user.profile.reservations.length;
@@ -198,7 +234,21 @@ class Users extends Component {
                   <h5>고객관리</h5>
                 </div>
                 <div className="ibox-content">
-                  <DataTable data={this.props.users} name="users" fields={this.fields} onChangeChecked={this.onChangeChecked} />
+                  <div className="row">
+                    <div className="col-lg-12">
+                      <div className="form-group" id="data_5">
+                        <label className="font-normal">가입일 검색</label>
+                        <div className="input-daterange input-group" id="datepicker">
+                          <input type="text" className="input-sm form-control" id="startDate" />
+                          <span className="input-group-addon">to</span>
+                          <input type="text" className="input-sm form-control" id="endDate" />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-lg-12">
+                      <DataTable data={users} name="users" fields={this.fields} onChangeChecked={this.onChangeChecked} />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

@@ -7,14 +7,24 @@ new ValidatedMethod({
   name: 'brands.insert',
   validate: new SimpleSchema({
     name: { type: String },
-    email: { type: String },
-    phoneNumber: { type: String }
+    comment: { type: String },
+    logoUrl: { type: String },
+    imageUrls: { type: [String] },
+    detail: { type: String },
+    serviceDetail: { type: String },
+    phoneNumber: { type: String },
+    email: { type: String }
   }).validator(),
-  run({ name, email, phoneNumber }) {
+  run({ name, comment, logoUrl, imageUrls, detail, serviceDetail, phoneNumber, email }) {
     Brands.insert({
       name: name,
-      email: email,
+      comment: comment,
+      logoUrl: logoUrl,
+      imageUrls: imageUrls,
+      detail: detail,
+      serviceDetail: serviceDetail,
       phoneNumber: phoneNumber,
+      email: email,
       phoneCallCount: 0,
       salesAmount: 0,
       isVisible: true,
@@ -47,13 +57,36 @@ new ValidatedMethod({
 });
 
 new ValidatedMethod({
+  name: 'brands.setIsVisible',
+  validate: new SimpleSchema({
+    ids: { type: [String] },
+    isVisible: { type: Boolean }
+  }).validator(),
+  run({ ids, isVisible }) {
+    Brands.update({
+      _id: {
+        $in: ids
+      }
+    }, {
+      $set: {
+        isVisible: isVisible
+      }
+    }, {
+      multi: true
+    });
+  }
+});
+
+new ValidatedMethod({
   name: 'brands.delete',
   validate: new SimpleSchema({
-    id: { type: String }
+    ids: { type: [String] }
   }).validator(),
-  run({ id }) {
+  run({ ids }) {
     Brands.remove({
-      _id: id
+      _id: {
+        $in: ids
+      }
     });
   }
 });

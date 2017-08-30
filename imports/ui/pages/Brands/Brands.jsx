@@ -4,6 +4,7 @@ import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { Redirect } from 'react-router-dom';
+import _ from 'lodash';
 
 import DataTable from '../../components/DataTable/DataTable';
 import PageHeader from '../../components/PageHeader/PageHeader';
@@ -45,6 +46,10 @@ class _Brands extends Component {
     {
       name: 'created at',
       key: 'createdAt'
+    },
+    {
+      name: 'is visible',
+      key: 'isVisible'
     }
   ];
 
@@ -63,14 +68,42 @@ class _Brands extends Component {
     });
   };
 
-  getPrice = (amount) => {
-    return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원';
-  };
-
   onChangeChecked = (checkedIds) => {
     this.setState({
       checkedIds: checkedIds
     });
+  };
+
+  onClickHidingBrand = () => {
+    Meteor.call('brands.setIsVisible', {
+      ids: this.state.checkedIds,
+      isVisible: false
+    }, (error) => {
+      if (error) {
+        toastr.error(error.reason);
+      }
+    })
+  };
+
+  onClickShowingBrand = () => {
+    Meteor.call('brands.setIsVisible', {
+      ids: this.state.checkedIds,
+      isVisible: true
+    }, (error) => {
+      if (error) {
+        toastr.error(error.reason);
+      }
+    })
+  };
+
+  onClickDeletingBrand = () => {
+    Meteor.call('brands.delete', {
+      ids: this.state.checkedIds
+    }, (error) => {
+      if (error) {
+        toastr.error(error.reason);
+      }
+    })
   };
 
   render() {
@@ -86,8 +119,12 @@ class _Brands extends Component {
       );
     }
 
-    this.props.brands.map((brand) => {
+    const brands = _.cloneDeep(this.props.brands);
+
+    brands.map((brand) => {
       brand.createdAt = moment(brand.createdAt).format('YYYY-MM-DD');
+
+      brand.isVisible = brand.isVisible == true ? '노출' : '숨김';
     });
 
     return (
@@ -101,14 +138,17 @@ class _Brands extends Component {
                   <h5>파트너</h5>
                 </div>
                 <div className="ibox-content">
-                  <DataTable data={this.props.brands} name="partners" fields={this.fields} onChangeChecked={this.onChangeChecked} />
+                  <DataTable data={brands} name="partners" fields={this.fields} onChangeChecked={this.onChangeChecked} />
                 </div>
               </div>
             </div>
           </div>
           <div className="row">
             <div className="col-lg-12">
-              <button onClick={this.onClickAddingBrand} className="btn btn-primary">추가</button>
+              <button onClick={this.onClickHidingBrand} className="btn btn-primary" style={{ marginLeft: 10 }}>숨기기</button>
+              <button onClick={this.onClickShowingBrand} className="btn btn-primary" style={{ marginLeft: 10 }}>보이기</button>
+              <button onClick={this.onClickDeletingBrand} className="btn btn-danger" style={{ marginLeft: 10 }}>삭제</button>
+              <button onClick={this.onClickAddingBrand} className="btn btn-primary pull-right">추가</button>
             </div>
           </div>
           <div className="row">
