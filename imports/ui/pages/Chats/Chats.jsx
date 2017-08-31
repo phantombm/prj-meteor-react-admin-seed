@@ -42,7 +42,7 @@ class _Chats extends Component {
       if (message.type == 'text') {
         return (
           <div key={message._id} className={`chat-message ${ message.isSent ? 'left' : 'right' }`}>
-            <img className="message-avatar" src="img/a1.jpg" alt="" />
+            <img className="message-avatar" src={message.isSent ? '/custom_images/user.png' : '/custom_images/cs.png'} alt="" />
             <div className="message">
               { message.isSent &&
               <Link className="message-author" to={`/users/${message.user.id}`}>{ message.user.name }</Link>
@@ -61,7 +61,7 @@ class _Chats extends Component {
       else if (message.type == 'image') {
         return (
           <div key={message._id} className={`chat-message ${ message.isSent ? 'left' : 'right' }`}>
-            <img className="message-avatar" src="img/a1.jpg" alt="" />
+            <img className="message-avatar" src={message.isSent ? '/custom_images/user.png' : '/custom_images/cs.png'} alt="" />
             <div className="message">
               { message.isSent &&
               <Link className="message-author" to={`/users/${message.user.id}`}>{ message.user.name }</Link>
@@ -148,7 +148,7 @@ class _Chats extends Component {
 
       return (
         <div key={room.userId} className="chat-user">
-          <img className="chat-avatar" src="img/a4.jpg" alt="" />
+          <img className="chat-avatar" src="/custom_images/user.png" alt="" />
           <div className="chat-user-name" style={{ display: 'inline-block' }}>
             <span style={{ cursor: 'pointer' }} onClick={() => { this.onClickUser(room) }}>{ room.userName }</span>
           </div>

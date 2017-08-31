@@ -7,7 +7,8 @@ export default class Profile extends Component {
     profile: PropTypes.object,
     statistics: PropTypes.array,
     graph: PropTypes.object,
-    basicInformation: PropTypes.array
+    basicInformation: PropTypes.array,
+    addresses: PropTypes.array.isRequired,
   };
 
   static defaultProps = {
@@ -95,10 +96,22 @@ export default class Profile extends Component {
   };
 
   renderBasicInformation = () => {
-    return this.props.basicInformation.map((item) => {
+    return this.props.basicInformation.map((item, index) => {
       return (
-        <div>
+        <div key={index}>
           <strong>{ item.name }</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ item.value }
+        </div>
+      );
+    });
+  };
+
+  renderAddresses = () => {
+    return this.props.addresses.map((address, index) => {
+      return (
+        <div key={index} style={{ marginTop: '10px' }}>
+          <strong>주소 { index + 1 }</strong>
+          <div>{ address.address }</div>
+          <div>{ address.detail }</div>
         </div>
       );
     });
@@ -116,7 +129,7 @@ export default class Profile extends Component {
         <div className="row m-b-lg m-t-lg">
           <div className="col-md-6">
             <div className="profile-image">
-              <img src={this.props.profile.imageUrl} className="img-circle circle-border m-b-md" alt="profile" />
+              <img src={this.props.profile.imageUrl || '/custom_images/user.png'} className="img-circle circle-border m-b-md" alt="profile" />
             </div>
             <div className="profile-info">
               <div>
@@ -144,12 +157,20 @@ export default class Profile extends Component {
             <div className="ibox">
               <div className="ibox-content">
                 <h3>기본 정보</h3>
-                <p className="small font-bold">
-                  <span><i className="fa fa-circle text-navy" /> Online status</span>
-                </p>
-                <p className="small">
+                <div className="small">
                   { this.renderBasicInformation() }
-                </p>
+                </div>
+              </div>
+            </div>
+            <div className="ibox">
+              <div className="ibox-content">
+                <h3>주소</h3>
+                { this.props.addresses.length == 0 &&
+                  <div className="small">등록된 주소가 없습니다.</div>
+                }
+                <div className="small">
+                  { this.renderAddresses() }
+                </div>
               </div>
             </div>
           </div>

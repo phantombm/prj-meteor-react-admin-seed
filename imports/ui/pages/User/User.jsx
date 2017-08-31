@@ -22,7 +22,7 @@ class User extends Component {
       name: '회원관리'
     },
     {
-      name: '고객관리',
+      name: '고객',
       linkTo: '/users'
     },
     {
@@ -62,7 +62,7 @@ class User extends Component {
       signInType: userProfile.signInType,
       roles: roles,
       introduction: userProfile.informationForSsam.introduction,
-      imageUrl: userProfile.informationForSsam.imageUrl || 'http://file2.instiz.net/data/file2/2016/01/05/8/1/6/816140efeb4b5edb67df6532837ad1e1.jpg'
+      imageUrl: userProfile.informationForSsam.imageUrl
     };
 
     const completedReservations = _.filter(this.props.reservations, (reservation) => {
@@ -136,15 +136,15 @@ class User extends Component {
         value: userProfile.name
       },
       {
-        name: '로그인 방법',
+        name: '소셜',
         value: userProfile.signInType
       },
       {
-        name: 'email',
+        name: '이메일',
         value: userProfile.email
       },
       {
-        name: '휴대폰 번호',
+        name: '휴대폰',
         value: userProfile.phoneNumber
       },
       {
@@ -156,7 +156,7 @@ class User extends Component {
     return (
       <div>
         <PageHeader title="프로필" items={this.pageHeaderItems} />
-        <Profile profile={profile} statistics={statistics} graph={graph} basicInformation={basicInformation} />
+        <Profile profile={profile} statistics={statistics} graph={graph} basicInformation={basicInformation} addresses={userProfile.addresses} />
       </div>
     );
   }

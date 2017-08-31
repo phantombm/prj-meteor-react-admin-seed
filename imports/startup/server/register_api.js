@@ -17,3 +17,4 @@ import '../../api/chats/server/publications';
 import '../../api/chats/methods';
 import '../../api/brands/server/publications';
 import '../../api/brands/methods';
+import '../../api/users/methods';

@@ -2,11 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
-import md5 from 'blueimp-md5';
 
 export default class DataTable extends Component {
   static propTypes = {
-    name: PropTypes.string.isRequired,
+    name: PropTypes.string,
     fields: PropTypes.array.isRequired,
     data: PropTypes.array.isRequired,
     onChangeChecked: PropTypes.func,
@@ -14,6 +13,7 @@ export default class DataTable extends Component {
   };
 
   static defaultProps = {
+    name: 'data-table-namespace',
     onChangeChecked: () => {},
     isCheckboxVisible: true
   };
@@ -23,18 +23,14 @@ export default class DataTable extends Component {
     checkedIds: []
   };
 
-  isInitialized = false;
-
   componentDidMount() {
     this.initialize();
   }
 
   componentWillUpdate(nextProps) {
-    if (this.isSameData(this.props.data, nextProps.data)) {
-      return;
+    if (!this.isSameData(this.props.data, nextProps.data)) {
+      this.destroy();
     }
-
-    this.destroy();
   }
 
   isSameData = (currentData, nextData) => {
@@ -46,7 +42,7 @@ export default class DataTable extends Component {
       return `${concatenatedString}${data}`;
     }, '');
 
-    if (md5(previousConcatenatedString) == md5(nextConcatenatedString)) {
+    if (previousConcatenatedString == nextConcatenatedString) {
       return true;
     }
     else {
@@ -55,13 +51,11 @@ export default class DataTable extends Component {
   };
 
   componentDidUpdate(previousProps) {
-    if (this.isSameData(previousProps.data, this.props.data)) {
-      return;
+    if (!this.isSameData(previousProps.data, this.props.data)) {
+      this.isInitialized = false;
+
+      this.initialize();
     }
-
-    this.isInitialized = false;
-
-    this.initialize();
   }
 
   destroy = () => {
@@ -69,21 +63,37 @@ export default class DataTable extends Component {
   };
 
   initialize = () => {
+    const visibleColumns = this.props.fields.map((field, index) => {
+      if (this.props.isCheckboxVisible) {
+        return index + 1;
+      }
+      else {
+        return index;
+      }
+    });
+
     this.dataTable = $(`.data-table.${this.props.name}`).DataTable({
       dom: '<"html5buttons"B>lTfgitp',
       buttons: [
-        { extend: 'copy' },
-        { extend: 'csv' },
-        { extend: 'excel', title: this.props.name },
-        { extend: 'pdf', title: this.props.name },
+        {
+          extend: 'excel',
+          title: this.props.name,
+          exportOptions: {
+            columns: visibleColumns
+          }
+        },
         {
           extend: 'print',
-          customize: (win) => {
-            $(win.document.body).addClass('white-bg');
+          title: this.props.name,
+          customize: (window) => {
+            $(window.document.body).addClass('white-bg');
 
-            $(win.document.body).css('font-size', '10px');
+            $(window.document.body).css('font-size', '10px');
 
-            $(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+            $(window.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+          },
+          exportOptions: {
+            columns: visibleColumns
           }
         }
       ],
@@ -96,7 +106,7 @@ export default class DataTable extends Component {
       ],
       lengthMenu: [
         [10, 25, 50, -1],
-        [10, 25, 50, 'All']
+        ['10', '25', '50', 'All']
       ],
       drawCallback: () => {
         if (!this.isInitialized) {
@@ -143,22 +153,10 @@ export default class DataTable extends Component {
     return isAllChecked;
   };
 
-  renderHead = () => {
-    return (
-      this.props.fields.map((field, index) => {
-        return (
-          <th key={index} style={{ minWidth: field.minWidth }}>{ field.name }</th>
-        );
-      })
-    );
-  };
-
-  onChangeAllChecked = () => {
+  onChangeAllChecked = (event) => {
     let checkedIds = _.clone(this.state.checkedIds);
 
-    const isAllChecked = this.isAllChecked(checkedIds);
-
-    if (!isAllChecked) {
+    if (event.target.checked) {
       $(this.dataTable.table().body()).children('tr').each(function() {
         const index = _.findIndex(checkedIds, (id) => {
           return id == $(this).attr('data-id');
@@ -167,10 +165,6 @@ export default class DataTable extends Component {
         if (index == -1) {
           checkedIds.push($(this).attr('data-id'));
         }
-      });
-
-      this.setState({
-        isAllChecked: true
       });
     }
     else {
@@ -183,13 +177,10 @@ export default class DataTable extends Component {
           checkedIds.splice(index, 1);
         }
       });
-
-      this.setState({
-        isAllChecked: false
-      });
     }
 
     this.setState({
+      isAllChecked: event.target.checked,
       checkedIds: checkedIds
     });
 
@@ -210,24 +201,32 @@ export default class DataTable extends Component {
       checkedIds.splice(index, 1);
     }
 
-    this.setState({
-      checkedIds: checkedIds
-    });
-
-    this.props.onChangeChecked(checkedIds);
-
     const isAllChecked = this.isAllChecked(checkedIds);
 
     if (!isAllChecked) {
       this.setState({
+        checkedIds: checkedIds,
         isAllChecked: false
       });
     }
     else {
       this.setState({
+        checkedIds: checkedIds,
         isAllChecked: true
       });
     }
+
+    this.props.onChangeChecked(checkedIds);
+  };
+
+  renderHead = () => {
+    return (
+      this.props.fields.map((field, index) => {
+        return (
+          <th key={index} style={{ minWidth: field.minWidth }}>{ field.name }</th>
+        );
+      })
+    );
   };
 
   renderBody = () => {

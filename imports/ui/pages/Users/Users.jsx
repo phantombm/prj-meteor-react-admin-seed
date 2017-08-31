@@ -6,8 +6,8 @@ import _ from 'lodash';
 import moment from 'moment';
 import { Redirect } from 'react-router-dom';
 
-import DataTable from '../../components/DataTable/DataTable';
 import PageHeader from '../../components/PageHeader/PageHeader';
+import DataViewer from '../../components/DataViewer/DataViewer';
 
 class Users extends Component {
   static propTypes = {
@@ -17,40 +17,39 @@ class Users extends Component {
 
   state = {
     checkedIds: [],
-    isRedirected: false,
-    startDate: moment().format('YYYY-MM-DD'),
-    endDate: moment().format('YYYY-MM-DD')
+    isRedirected: false
   };
 
   fields = [
     {
-      name: 'name',
+      name: '이름',
       key: 'profile.name',
       linkTo: '/users'
     },
     {
-      name: 'social',
+      name: '소셜',
       key: 'profile.signInType'
     },
     {
-      name: 'email',
+      name: '이메일',
       key: 'profile.email'
     },
     {
-      name: 'phone number',
+      name: '휴대폰',
       key: 'profile.phoneNumber'
     },
     {
-      name: 'phurchase count',
+      name: '구매수',
       key: 'profile.phurchaseCount'
     },
     {
-      name: 'phurchase amount',
+      name: '구매금액',
       key: 'profile.phurchaseAmount'
     },
     {
-      name: 'created at',
-      key: 'createdAt'
+      name: '가입일',
+      key: 'createdAt',
+      isSearchableDate: true
     }
   ];
 
@@ -59,7 +58,7 @@ class Users extends Component {
       name: '회원관리'
     },
     {
-      name: '고객관리'
+      name: '고객'
     }
   ];
 
@@ -134,37 +133,42 @@ class Users extends Component {
     });
   };
 
-  componentDidUpdate() {
-    if (this.isInitialized) {
+  onClickAppointingManager = () => {
+    let isValid = true;
+
+    this.state.checkedIds.forEach((id) => {
+      if (!isValid) {
+        return;
+      }
+
+      const user = _.find(this.props.users, {
+        _id: id
+      });
+
+      if (user.profile.signInType != 'password') {
+        isValid = false;
+      }
+    });
+
+    if (!isValid) {
+      toastr.error('이메일로 가입한 사용자만 임명할 수 있습니다.');
+
       return;
     }
 
-    $.fn.datepicker.dates['ko'] = {
-      days: ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'],
-      daysShort: ['일', '월', '화', '수', '목', '금', '토'],
-      daysMin: ['일', '월', '화', '수', '목', '금', '토'],
-      months: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
-      monthsShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
-      today: '오늘',
-      clear: '삭제',
-      format: 'yyyy-mm-dd',
-      titleFormat: 'yyyy년 mm월'
-    };
-    
-    $('#data_5 .input-daterange').datepicker({
-      keyboardNavigation: false,
-      forceParse: false,
-      autoclose: true,
-      language: 'ko'
-    }).on('changeDate', () => {
-      this.setState({
-        startDate: $('#startDate').val(),
-        endDate: $('#endDate').val()
-      });
-    });
+    Meteor.call('users.setIsManager', {
+      ids: this.state.checkedIds,
+      isManager: true
+    }, (error) => {
+      if (error) {
+        toastr.error(error.reason);
 
-    this.isInitialized = true;
-  }
+        return;
+      }
+
+      toastr.success('임명되었습니다.');
+    });
+  };
 
   render() {
     if (!this.props.isUsersReady) {
@@ -179,22 +183,18 @@ class Users extends Component {
       );
     }
 
-    let users = _.cloneDeep(this.props.users);
-
-    users = _.filter(users, (user) => {
-      return moment(user.profile.createdAt).format('YYYY-MM-DD') >= moment(this.state.startDate).format('YYYY-MM-DD') && moment(user.profile.createdAt).format('YYYY-MM-DD') <= moment(this.state.endDate).format('YYYY-MM-DD');
-    });
+    const users = _.cloneDeep(this.props.users);
 
     users.map((user) => {
       user.createdAt = moment(user.createdAt).format('YYYY-MM-DD');
 
-      user.profile.phurchaseCount = user.profile.reservations.length;
+      user.profile.phurchaseCount = _.padStart(user.profile.reservations.length, 5, '0');
 
       const phurchaseAmount = _.reduce(user.profile.reservations, (sum, reservation) => {
         return sum + reservation.price.amount;
       }, 0);
 
-      user.profile.phurchaseAmount = this.getPrice(phurchaseAmount);
+      user.profile.phurchaseAmount = this.getPrice(_.padStart(phurchaseAmount, 9, '0'));
     });
 
     return (
@@ -225,7 +225,7 @@ class Users extends Component {
             </div>
           </div>
         </div>
-        <PageHeader title="고객관리" items={this.pageHeaderItems} />
+        <PageHeader title="고객" items={this.pageHeaderItems} />
         <div className="wrapper wrapper-content animated fadeInRight">
           <div className="row">
             <div className="col-lg-12">
@@ -234,21 +234,7 @@ class Users extends Component {
                   <h5>고객관리</h5>
                 </div>
                 <div className="ibox-content">
-                  <div className="row">
-                    <div className="col-lg-12">
-                      <div className="form-group" id="data_5">
-                        <label className="font-normal">가입일 검색</label>
-                        <div className="input-daterange input-group" id="datepicker">
-                          <input type="text" className="input-sm form-control" id="startDate" defaultValue={moment().format('YYYY-MM-DD')} />
-                          <span className="input-group-addon">to</span>
-                          <input type="text" className="input-sm form-control" id="endDate" defaultValue={moment().format('YYYY-MM-DD')} />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-lg-12">
-                      <DataTable data={users} name="users" fields={this.fields} onChangeChecked={this.onChangeChecked} />
-                    </div>
-                  </div>
+                  <DataViewer name="users" fields={this.fields} data={users} onChangeChecked={this.onChangeChecked} />
                 </div>
               </div>
             </div>
@@ -257,6 +243,7 @@ class Users extends Component {
             <div className="col-lg-12">
               <button data-toggle="modal" data-target="#sendingRemoteNotification" className="btn btn-primary">푸쉬알람 보내기</button>
               <button onClick={this.onClickChatting} className="btn btn-primary" style={{ marginLeft: '10px' }}>채팅 시작하기</button>
+              <button onClick={this.onClickAppointingManager} className="btn btn-primary pull-right" style={{ marginLeft: '10px' }}>관리자 임명</button>
             </div>
           </div>
           <div className="row">
@@ -276,7 +263,8 @@ export default createContainer(() => {
   return {
     isUsersReady: usersHandle.ready(),
     users: Meteor.users.find({
-      'profile.isSsam': false
+      'profile.isSsam': false,
+      'profile.isManager': false
     }).fetch()
   };
 }, Users);
